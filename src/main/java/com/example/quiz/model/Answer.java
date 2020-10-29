@@ -8,10 +8,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "answer")
 @Getter
 @Setter
-@NoArgsConstructor
+@Table(name = "answer")
 public class Answer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +21,8 @@ public class Answer implements Serializable {
 
     @Column(name = "isCorrect")
     private Boolean isCorrect;
+
+    public Answer() {}
 
     public Answer(String answerText, boolean isCorrect) {
         this.answerText = answerText;

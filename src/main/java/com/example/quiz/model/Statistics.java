@@ -6,21 +6,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "statistics")
 @Getter
 @Setter
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Statistics {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "preferred_difficulty")
+    @Column(name = "high_difficulty")
     @Enumerated(EnumType.STRING)
-    private Difficulty preferredDifficulty;
+    private Difficulty highDifficulty;
 
     @Column(name = "number_of_games")
     private int numberOfGames;
@@ -28,8 +28,12 @@ public class Statistics {
     @Column(name = "score")
     private int score;
 
+    @OneToMany
+    @JoinTable(name = "answer_statistics")
+    private List<AnswerStatistics> answeredQuestionStatistics;
+
     public Statistics(Difficulty difficulty, int numberOfGames, int score) {
-        this.preferredDifficulty = difficulty;
+        this.highDifficulty = difficulty;
         this.numberOfGames = numberOfGames;
         this.score = score;
     }
@@ -43,13 +47,13 @@ public class Statistics {
             return false;
         }
         Statistics statistics = (Statistics) obj;
-        return this.preferredDifficulty == statistics.preferredDifficulty && this.numberOfGames == statistics.numberOfGames &&
+        return this.highDifficulty == statistics.highDifficulty && this.numberOfGames == statistics.numberOfGames &&
                 this.score == statistics.score;
     }
 
     @Override
     public int hashCode() {
-        return (31 * ((preferredDifficulty == null) ? 0 : preferredDifficulty.hashCode()) +
+        return (31 * ((highDifficulty == null) ? 0 : highDifficulty.hashCode()) +
                 31 * numberOfGames + 31 * score);
     }
 }

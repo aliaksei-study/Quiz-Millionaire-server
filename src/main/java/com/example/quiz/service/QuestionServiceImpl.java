@@ -1,5 +1,7 @@
 package com.example.quiz.service;
 
+import com.example.quiz.dto.QuestionDto;
+import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Question;
 import com.example.quiz.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,12 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public void addQuestion(Question question) {
+    public void addQuestion(QuestionDto questionDto) {
 
     }
 
     @Override
-    public void updateQuestion(Question question, Long id) {
+    public void updateQuestion(QuestionDto questionDto, Long id) {
 
     }
 
@@ -35,7 +37,7 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public Set<Question> getQuestions() {
-        return questionRepository.findAll();
+    public List<QuestionDto> getQuestions() {
+        return Mapper.mapAll(questionRepository.findAll(), QuestionDto.class);
     }
 }

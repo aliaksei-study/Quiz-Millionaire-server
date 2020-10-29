@@ -8,13 +8,12 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 @Entity
-@Table(name = "question")
 @Getter
 @Setter
-@NoArgsConstructor
+@Table(name = "question")
 public class Question extends AbstractAuditingEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +25,9 @@ public class Question extends AbstractAuditingEntity implements Serializable {
     @Column(name = "image_path")
     private String imagePath;
 
+    @Column(name = "is_temporal")
+    private Boolean isTemporal;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "difficulty_id")
     private Difficulty difficulty;
@@ -36,11 +38,16 @@ public class Question extends AbstractAuditingEntity implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
-    Set<Answer> answers;
+    List<Answer> answers;
 
-    public Question(String questionText, String imagePath, Difficulty difficulty, Category category, Set<Answer> answers) {
+    public Question() {
+
+    }
+
+    public Question(String questionText, String imagePath, Boolean isTemporal, Difficulty difficulty, Category category, List<Answer> answers) {
         this.questionText = questionText;
         this.imagePath = imagePath;
+        this.isTemporal = isTemporal;
         this.difficulty = difficulty;
         this.category = category;
         this.answers = answers;
@@ -57,7 +64,8 @@ public class Question extends AbstractAuditingEntity implements Serializable {
         Question question = (Question) obj;
         return this.category == question.category && this.difficulty == question.difficulty &&
                 (null != this.imagePath) && this.imagePath.equals(question.imagePath) &&
-                (null != this.questionText) && this.questionText.equals(question.questionText);
+                (null != this.questionText) && this.questionText.equals(question.questionText) &&
+                (null != this.isTemporal) && this.isTemporal.equals(question.isTemporal);
     }
 
     @Override
@@ -65,6 +73,7 @@ public class Question extends AbstractAuditingEntity implements Serializable {
         return (31 * ((null == questionText) ? 0 : questionText.hashCode()) +
                 31 * ((null == imagePath) ? 0 : imagePath.hashCode()) +
                 31 * ((null == difficulty) ? 0 : difficulty.hashCode()) +
-                31 * ((null == category) ? 0 : category.hashCode()));
+                31 * ((null == category) ? 0 : category.hashCode()) +
+                31 * ((null == isTemporal) ? 0 : isTemporal.hashCode()));
     }
 }
