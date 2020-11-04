@@ -1,30 +1,42 @@
 package com.example.quiz.model;
 
+import com.example.quiz.model.enumeration.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 
 @Entity
 @Table(name = "player")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Player extends AbstractAuditingEntity implements Serializable {
+public class Player extends AbstractAuditingEntity implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "principal_id")
-    private Principal principal;
+    @Column(name = "user_name")
+    private String username;
 
-    @OneToOne
-    @JoinColumn(name = "statistics_id")
-    private Statistics statistics;
+    @Column(name = "passw")
+    private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
+
+    public Player(String username, String password, Role role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -35,12 +47,39 @@ public class Player extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Player player = (Player) obj;
-        return this.id.equals(player.id);
+        return this.username != null && this.username.equals(player.username) && this.password != null &&
+                this.password.equals(player.password) && this.role == player.role;
     }
 
     @Override
     public int hashCode() {
-        return (31 * ((this.principal == null) ? 0 : this.principal.hashCode()) +
-                31 * ((this.statistics == null) ? 0 : this.statistics.hashCode()));
+        return (31 * ((this.username == null) ? 0 : this.username.hashCode()) +
+                31 * ((this.password == null) ? 0 : this.password.hashCode()) +
+                31 * ((this.role == null) ? 0 : this.role.hashCode()));
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(getRole());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 }

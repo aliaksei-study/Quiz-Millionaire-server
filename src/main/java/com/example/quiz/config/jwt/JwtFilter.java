@@ -1,6 +1,6 @@
 package com.example.quiz.config.jwt;
 
-import com.example.quiz.service.IPrincipalService;
+import com.example.quiz.service.IPlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,12 +23,12 @@ public class JwtFilter extends GenericFilterBean {
     public static final String BEARER = "Bearer ";
 
     private JwtProvider jwtProvider;
-    private IPrincipalService principalService;
+    private IPlayerService playerService;
 
     @Autowired
-    public JwtFilter(JwtProvider jwtProvider, IPrincipalService principalService) {
+    public JwtFilter(JwtProvider jwtProvider, IPlayerService playerService) {
         this.jwtProvider = jwtProvider;
-        this.principalService = principalService;
+        this.playerService = playerService;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class JwtFilter extends GenericFilterBean {
         String token = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (token != null && jwtProvider.validateToken(token)) {
             String userLogin = jwtProvider.getLoginFromToken(token);
-            UserDetails customUserDetails = principalService.loadUserByUsername(userLogin);
+            UserDetails customUserDetails = playerService.loadUserByUsername(userLogin);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails,
                     null, customUserDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);

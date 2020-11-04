@@ -25,9 +25,14 @@ public class AnswerStatistics implements Serializable {
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
-    public AnswerStatistics(Question question, Answer answer) {
+    @ManyToOne
+    @JoinColumn(name = "player_id")
+    private Player player;
+
+    public AnswerStatistics(Question question, Answer answer, Player player) {
         this.question = question;
         this.answer = answer;
+        this.player = player;
     }
 
     @Override
@@ -39,12 +44,14 @@ public class AnswerStatistics implements Serializable {
             return false;
         }
         AnswerStatistics answerStatistics = (AnswerStatistics) obj;
-        return super.equals(answerStatistics) && this.question != null && this.question.equals(answerStatistics.question)
-                && this.answer != null && this.answer.equals(answerStatistics.answer);
+        return this.question != null && this.question.equals(answerStatistics.question)
+                && this.answer != null && this.answer.equals(answerStatistics.answer) &&
+                this.player.equals(answerStatistics.player);
     }
 
     @Override
     public int hashCode() {
-        return (super.hashCode() + ((null == question) ? 0 : question.hashCode()) + ((null == answer) ? 0 : answer.hashCode()));
+        return ((null == question) ? 0 : question.hashCode()) + ((null == answer) ? 0 : answer.hashCode()) +
+                ((null == player) ? 0 : player.hashCode());
     }
 }

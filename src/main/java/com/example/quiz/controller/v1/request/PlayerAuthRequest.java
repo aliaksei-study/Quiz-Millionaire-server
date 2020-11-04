@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 @ToString
-public class PrincipalAuthRequest {
+public class PlayerAuthRequest {
     @Email
     private String email;
     @NotNull

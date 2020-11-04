@@ -1,11 +1,14 @@
 package com.example.quiz.service;
 
+import com.example.quiz.exception.AnswerNotFoundException;
 import com.example.quiz.model.Answer;
 import com.example.quiz.repository.AnswerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -13,6 +16,7 @@ import java.util.Set;
 public class AnswerServiceImpl implements IAnswerService {
     private final AnswerRepository answerRepository;
 
+    @Autowired
     public AnswerServiceImpl(AnswerRepository answerRepository) {
         this.answerRepository = answerRepository;
     }
@@ -30,6 +34,12 @@ public class AnswerServiceImpl implements IAnswerService {
     @Override
     public void deleteAnswer(Long id) {
 
+    }
+
+    @Override
+    public Answer getAnswerById(Long answerId) throws AnswerNotFoundException {
+        return answerRepository.findById(answerId).orElseThrow(() ->
+                new AnswerNotFoundException("answer with id " + answerId + " is not exist"));
     }
 
     @Override

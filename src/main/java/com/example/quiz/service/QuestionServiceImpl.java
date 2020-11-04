@@ -1,6 +1,7 @@
 package com.example.quiz.service;
 
 import com.example.quiz.dto.QuestionDto;
+import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Question;
 import com.example.quiz.repository.QuestionRepository;
@@ -34,6 +35,12 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public void deleteQuestion(Long id) {
 
+    }
+
+    @Override
+    public Question getQuestionById(Long questionId) throws QuestionNotFoundException {
+        return questionRepository.findById(questionId).orElseThrow(() ->
+                new QuestionNotFoundException("question with id: " + questionId + " is not exist"));
     }
 
     @Override

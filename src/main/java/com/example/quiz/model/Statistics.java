@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "statistics")
@@ -28,14 +27,15 @@ public class Statistics {
     @Column(name = "score")
     private int score;
 
-    @OneToMany
-    @JoinTable(name = "answer_statistics")
-    private List<AnswerStatistics> answeredQuestionStatistics;
+    @OneToOne
+    @JoinColumn(name = "player_id")
+    private Player player;
 
-    public Statistics(Difficulty difficulty, int numberOfGames, int score) {
+    public Statistics(Difficulty difficulty, int numberOfGames, int score, Player player) {
         this.highDifficulty = difficulty;
         this.numberOfGames = numberOfGames;
         this.score = score;
+        this.player = player;
     }
 
     @Override
@@ -48,12 +48,12 @@ public class Statistics {
         }
         Statistics statistics = (Statistics) obj;
         return this.highDifficulty == statistics.highDifficulty && this.numberOfGames == statistics.numberOfGames &&
-                this.score == statistics.score;
+                this.score == statistics.score && this.player.equals(statistics.player);
     }
 
     @Override
     public int hashCode() {
         return (31 * ((highDifficulty == null) ? 0 : highDifficulty.hashCode()) +
-                31 * numberOfGames + 31 * score);
+                31 * numberOfGames + 31 * score) + player.hashCode();
     }
 }

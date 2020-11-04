@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class PrincipalWithSuchEmailAlreadyExistsException extends Exception {
-    public PrincipalWithSuchEmailAlreadyExistsException(String message) {
+public class PlayerWithSuchEmailAlreadyExists extends Exception {
+    public PlayerWithSuchEmailAlreadyExists(String message) {
         super(message);
     }
 
-    public PrincipalWithSuchEmailAlreadyExistsException(String message, Throwable cause) {
+    public PlayerWithSuchEmailAlreadyExists(String message, Throwable cause) {
         super(message, cause);
     }
 }
