@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,6 +37,11 @@ public class StatisticsServiceImpl implements IStatisticsService {
         } else {
             return updateStatistics(statisticsOptional.get(), statisticsDto);
         }
+    }
+
+    @Override
+    public List<StatisticsDto> getStatistics() {
+        return Mapper.mapAll(statisticsRepository.findAll(), StatisticsDto.class);
     }
 
     private StatisticsDto updateStatistics(Statistics statistics, StatisticsDto statisticsDto) {

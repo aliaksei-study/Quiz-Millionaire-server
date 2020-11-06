@@ -1,6 +1,7 @@
 package com.example.quiz.controller.v1.api;
 
 import com.example.quiz.controller.v1.request.StatisticsRequest;
+import com.example.quiz.dto.PlayerDto;
 import com.example.quiz.dto.StatisticsDto;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Player;
@@ -9,14 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/statistics")
@@ -26,6 +25,12 @@ public class StatisticsController {
     @Autowired
     public StatisticsController(IStatisticsService statisticsService) {
         this.statisticsService = statisticsService;
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<StatisticsDto>> getStatistics() {
+        List<StatisticsDto> statistics = statisticsService.getStatistics();
+        return ResponseEntity.ok(statistics);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

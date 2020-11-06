@@ -1,7 +1,6 @@
 package com.example.quiz.mapper;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 
 import java.util.Collection;

@@ -10,6 +10,4 @@ import lombok.*;
 public class PlayerDto {
     private Long id;
     private String username;
-    private int numberOfGames;
-    private int score;
 }

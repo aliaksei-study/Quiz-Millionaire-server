@@ -10,13 +10,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "player")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Player extends AbstractAuditingEntity implements UserDetails, Comparable<Player> {
+public class Player extends AbstractAuditingEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +33,18 @@ public class Player extends AbstractAuditingEntity implements UserDetails, Compa
     @Column(name = "role")
     private Role role;
 
-    @OneToOne(mappedBy = "player")
-    private Statistics statistics;
+    @ManyToMany(cascade = {CascadeType.MERGE})
+    @JoinTable(name = "player_liked_question",
+            joinColumns = {@JoinColumn(name = "player_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "question_id", referencedColumnName = "id")})
+    List<Question> likedQuestions;
+
+    @ManyToMany(cascade = {CascadeType.MERGE})
+    @JoinTable(name = "player_disliked_question",
+            joinColumns = {@JoinColumn(name = "player_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "question_id", referencedColumnName = "id")})
+    List<Question> dislikedQuestions;
+
 
     public Player(String username, String password, Role role) {
         this.username = username;
@@ -43,10 +54,10 @@ public class Player extends AbstractAuditingEntity implements UserDetails, Compa
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(null == obj || this.getClass() != obj.getClass()) {
+        if (null == obj || this.getClass() != obj.getClass()) {
             return false;
         }
         Player player = (Player) obj;
@@ -84,10 +95,5 @@ public class Player extends AbstractAuditingEntity implements UserDetails, Compa
     @Override
     public boolean isEnabled() {
         return false;
-    }
-
-    @Override
-    public int compareTo(Player player) {
-        return this.statistics.getScore() - player.statistics.getScore();
     }
 }

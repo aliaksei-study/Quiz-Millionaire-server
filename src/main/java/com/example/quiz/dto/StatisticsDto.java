@@ -13,7 +13,7 @@ public class StatisticsDto {
     private Difficulty highDifficulty;
     private int numberOfGames;
     private int score;
-    private PlayerDto playerDto;
+    private PlayerDto player;
 
     public StatisticsDto(int score) {
         this.score = score;
