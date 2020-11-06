@@ -32,8 +32,8 @@ public class StatisticsController {
     public ResponseEntity<StatisticsDto> saveStatistics(@RequestBody @Valid StatisticsRequest statisticsRequest,
                                                         @AuthenticationPrincipal Player player)
             throws URISyntaxException {
-        StatisticsDto statisticsDto;
-        statisticsDto = statisticsService.saveStatistics(Mapper.map(statisticsRequest, StatisticsDto.class), player);
+        StatisticsDto statisticsDto = new StatisticsDto(statisticsRequest.getScore());
+        statisticsDto = statisticsService.saveStatistics(statisticsDto, player);
         return ResponseEntity.created(new URI("/api/v1/statistics/" + statisticsDto.getId()))
                 .body(statisticsDto);
     }

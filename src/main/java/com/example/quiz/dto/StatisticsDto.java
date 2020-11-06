@@ -15,4 +15,7 @@ public class StatisticsDto {
     private int score;
     private PlayerDto playerDto;
 
+    public StatisticsDto(int score) {
+        this.score = score;
+    }
 }

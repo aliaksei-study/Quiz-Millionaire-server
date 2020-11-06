@@ -4,6 +4,7 @@ import com.example.quiz.dto.StatisticsDto;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Player;
 import com.example.quiz.model.Statistics;
+import com.example.quiz.model.enumeration.Difficulty;
 import com.example.quiz.repository.StatisticsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class StatisticsServiceImpl implements IStatisticsService {
     public StatisticsDto saveStatistics(StatisticsDto statisticsDto, Player player) {
         Optional<Statistics> statisticsOptional;
         statisticsOptional = statisticsRepository.findStatisticsByPlayer(player);
+        statisticsDto.setHighDifficulty(defineDifficultyByNumberOfAnsweredQuestions(statisticsDto.getScore()));
         if(statisticsOptional.isEmpty()) {
             Statistics statistics = Mapper.map(statisticsDto, Statistics.class);
             statistics.setPlayer(player);
@@ -40,8 +42,23 @@ public class StatisticsServiceImpl implements IStatisticsService {
         if(statistics.getHighDifficulty().getCost() < statisticsDto.getHighDifficulty().getCost()) {
             statistics.setHighDifficulty(statisticsDto.getHighDifficulty());
         }
-        statistics.setScore(statistics.getScore() + 1);
+        if(statistics.getScore() < statisticsDto.getScore()) {
+            statistics.setScore(statisticsDto.getScore());
+        }
+        statistics.setNumberOfGames(statistics.getNumberOfGames() + 1);
         statistics = statisticsRepository.save(statistics);
         return Mapper.map(statistics, StatisticsDto.class);
+    }
+
+    private Difficulty defineDifficultyByNumberOfAnsweredQuestions(int score) {
+        if(score == 14 || score == 15) {
+            return Difficulty.NIGHTMARE;
+        } else if(score == 12 || score == 13) {
+            return Difficulty.HARD;
+        } else if(score >= 6) {
+            return Difficulty.MEDIUM;
+        } else {
+            return Difficulty.EASY;
+        }
     }
 }

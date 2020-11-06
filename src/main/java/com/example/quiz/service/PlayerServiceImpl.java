@@ -1,5 +1,7 @@
 package com.example.quiz.service;
 
+import com.example.quiz.dto.PlayerDto;
+import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Player;
 import com.example.quiz.model.enumeration.Role;
 import com.example.quiz.repository.PlayerRepository;
@@ -9,7 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.TreeSet;
 
 @Service
 @Transactional
@@ -37,5 +41,10 @@ public class PlayerServiceImpl implements IPlayerService {
     public void registerPlayer(String email, String encodedPassword) {
         Player player = new Player(email, encodedPassword, Role.PLAYER);
         playerRepository.save(player);
+    }
+
+    @Override
+    public List<PlayerDto> getAllPlayers() {
+        return Mapper.mapAll(playerRepository.findAll(), PlayerDto.class);
     }
 }

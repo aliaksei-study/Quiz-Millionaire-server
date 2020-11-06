@@ -33,7 +33,7 @@ public class AnswerStatisticsController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AnswerStatisticsDto> savePrincipalAnswer(
+    public ResponseEntity<AnswerStatisticsDto> savePlayerAnswer(
             @RequestBody @Valid PlayerAnswerRequest playerAnswerRequest, @AuthenticationPrincipal Player player)
             throws AnswerNotFoundException, QuestionNotFoundException, URISyntaxException {
         AnswerStatisticsDto answerStatisticsDto;

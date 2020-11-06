@@ -9,5 +9,7 @@ import lombok.*;
 @ToString
 public class PlayerDto {
     private Long id;
-    private String email;
+    private String username;
+    private int numberOfGames;
+    private int score;
 }

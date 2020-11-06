@@ -16,7 +16,7 @@ import java.util.Collections;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Player extends AbstractAuditingEntity implements UserDetails {
+public class Player extends AbstractAuditingEntity implements UserDetails, Comparable<Player> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +31,9 @@ public class Player extends AbstractAuditingEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
+
+    @OneToOne(mappedBy = "player")
+    private Statistics statistics;
 
     public Player(String username, String password, Role role) {
         this.username = username;
@@ -81,5 +84,10 @@ public class Player extends AbstractAuditingEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
+    }
+
+    @Override
+    public int compareTo(Player player) {
+        return this.statistics.getScore() - player.statistics.getScore();
     }
 }
