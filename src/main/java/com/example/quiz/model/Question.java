@@ -62,10 +62,7 @@ public class Question extends AbstractAuditingEntity implements Serializable {
             return false;
         }
         Question question = (Question) obj;
-        return this.category == question.category && this.difficulty == question.difficulty &&
-                (null != this.imagePath) && this.imagePath.equals(question.imagePath) &&
-                (null != this.questionText) && this.questionText.equals(question.questionText) &&
-                (null != this.isTemporal) && this.isTemporal.equals(question.isTemporal);
+        return this.getId().equals(question.getId());
     }
 
     @Override

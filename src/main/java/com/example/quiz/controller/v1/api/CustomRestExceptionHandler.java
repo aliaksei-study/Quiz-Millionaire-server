@@ -1,7 +1,7 @@
 package com.example.quiz.controller.v1.api;
 
 import com.example.quiz.controller.v1.ApiException;
-import com.example.quiz.exception.PlayerWithSuchEmailAlreadyExists;
+import com.example.quiz.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,4 +18,27 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
     }
 
+    @ExceptionHandler({AnswerNotFoundException.class})
+    public ResponseEntity<ApiException> handleAnswerNotFoundException(AnswerNotFoundException ex) {
+        ApiException apiException = new ApiException(HttpStatus.NOT_FOUND, ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
+    }
+
+    @ExceptionHandler({QuestionNotFoundException.class})
+    public ResponseEntity<ApiException> handleQuestionNotFoundException(QuestionNotFoundException ex) {
+        ApiException apiException = new ApiException(HttpStatus.NOT_FOUND, ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
+    }
+
+    @ExceptionHandler({QuestionAlreadyLikedException.class})
+    public ResponseEntity<ApiException> handleQuestionAlreadyLiked(QuestionAlreadyLikedException ex) {
+        ApiException apiException = new ApiException(HttpStatus.NOT_MODIFIED, ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
+    }
+
+    @ExceptionHandler({QuestionAlreadyDislikedException.class})
+    public ResponseEntity<ApiException> handleQuestionAlreadyDisliked(QuestionAlreadyDislikedException ex) {
+        ApiException apiException = new ApiException(HttpStatus.NOT_MODIFIED, ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
+    }
 }
