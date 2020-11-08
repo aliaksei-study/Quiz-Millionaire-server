@@ -76,6 +76,6 @@ public class PlayerController {
         if (playerService.isPlayerWithSuchUsernameExists(principalAuthRequest.getEmail())) {
             return ResponseEntity.ok(new JwtResponse(jwtProvider.generateToken(principalAuthRequest.getEmail())));
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.noContent().build();
     }
 }

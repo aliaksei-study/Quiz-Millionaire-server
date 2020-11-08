@@ -4,6 +4,7 @@ import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Question;
+import com.example.quiz.model.enumeration.Difficulty;
 import com.example.quiz.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,6 @@ public class QuestionServiceImpl implements IQuestionService {
     @Autowired
     public QuestionServiceImpl(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
-    }
-
-    @Override
-    public void addQuestion(QuestionDto questionDto) {
-
     }
 
     @Override
@@ -46,5 +42,13 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public List<QuestionDto> getQuestions() {
         return Mapper.mapAll(questionRepository.findAll(), QuestionDto.class);
+    }
+
+    @Override
+    public QuestionDto saveQuestion(QuestionDto questionDto) {
+        Question question = Mapper.map(questionDto, Question.class);
+        question.setDifficulty(Difficulty.MEDIUM);
+        question = questionRepository.save(question);
+        return Mapper.map(question, QuestionDto.class);
     }
 }

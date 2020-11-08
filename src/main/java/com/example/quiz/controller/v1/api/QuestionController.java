@@ -1,12 +1,16 @@
 package com.example.quiz.controller.v1.api;
 
+import com.example.quiz.controller.v1.request.AddingQuestionRequest;
+import com.example.quiz.dto.AnswerDto;
 import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.service.IQuestionService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
@@ -22,5 +26,15 @@ public class QuestionController {
     @GetMapping
     public List<QuestionDto> getQuestions() {
         return questionService.getQuestions();
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<QuestionDto> saveQuestion(@RequestBody @Valid AddingQuestionRequest request)
+            throws URISyntaxException {
+        QuestionDto questionDto = new QuestionDto(request.getQuestionText(), request.getCategory(),
+                request.getQuestionImageUrl(), request.getAnswers());
+        questionDto = questionService.saveQuestion(questionDto);
+        return ResponseEntity.created(new URI("/api/v1/questions/" + questionDto.getId()))
+                .body(questionDto);
     }
 }
