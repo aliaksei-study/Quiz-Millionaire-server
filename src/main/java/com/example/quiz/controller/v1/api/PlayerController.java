@@ -5,10 +5,7 @@ import com.example.quiz.controller.v1.JwtResponse;
 import com.example.quiz.controller.v1.request.LikedQuestionRequest;
 import com.example.quiz.controller.v1.request.PlayerAuthRequest;
 import com.example.quiz.dto.PlayerDto;
-import com.example.quiz.exception.PlayerWithSuchEmailAlreadyExists;
-import com.example.quiz.exception.QuestionAlreadyDislikedException;
-import com.example.quiz.exception.QuestionAlreadyLikedException;
-import com.example.quiz.exception.QuestionNotFoundException;
+import com.example.quiz.exception.*;
 import com.example.quiz.model.Player;
 import com.example.quiz.service.IPlayerService;
 import org.springframework.http.MediaType;
@@ -24,11 +21,10 @@ import java.util.List;
 @RequestMapping(value = "/api/v1")
 public class PlayerController {
     private IPlayerService playerService;
-    private PasswordEncoder passwordEncoder;
     private JwtProvider jwtProvider;
+    private PasswordEncoder passwordEncoder;
 
-    public PlayerController(IPlayerService playerService, JwtProvider jwtProvider,
-                            PasswordEncoder passwordEncoder) {
+    public PlayerController(IPlayerService playerService, JwtProvider jwtProvider, PasswordEncoder passwordEncoder) {
         this.playerService = playerService;
         this.jwtProvider = jwtProvider;
         this.passwordEncoder = passwordEncoder;
@@ -72,10 +68,12 @@ public class PlayerController {
 
     @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<JwtResponse> loginPrincipal(@RequestBody @Valid PlayerAuthRequest principalAuthRequest) {
-        if (playerService.isPlayerWithSuchUsernameExists(principalAuthRequest.getEmail())) {
+    public ResponseEntity<JwtResponse> loginPrincipal(@RequestBody @Valid PlayerAuthRequest principalAuthRequest)
+            throws InvalidCredentialsException {
+        Player player = (Player) playerService.loadUserByUsername(principalAuthRequest.getEmail());
+        if(passwordEncoder.matches(principalAuthRequest.getPassword(), player.getPassword())) {
             return ResponseEntity.ok(new JwtResponse(jwtProvider.generateToken(principalAuthRequest.getEmail())));
         }
-        return ResponseEntity.noContent().build();
+        throw new InvalidCredentialsException("Invalid email or password");
     }
 }

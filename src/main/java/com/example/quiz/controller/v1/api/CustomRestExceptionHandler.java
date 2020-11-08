@@ -41,4 +41,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiException apiException = new ApiException(HttpStatus.NOT_MODIFIED, ex.getLocalizedMessage());
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
     }
+
+    @ExceptionHandler({InvalidCredentialsException.class})
+    public ResponseEntity<ApiException> handleInvalidCredentials(InvalidCredentialsException ex) {
+        ApiException apiException = new ApiException(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
+    }
 }
