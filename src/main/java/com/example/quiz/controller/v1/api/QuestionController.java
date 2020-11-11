@@ -31,7 +31,7 @@ public class QuestionController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<QuestionDto> saveQuestion(@RequestBody @Valid AddingQuestionRequest request)
             throws URISyntaxException {
-        QuestionDto questionDto = new QuestionDto(request.getQuestionText(), request.getCategory(),
+        QuestionDto questionDto = new QuestionDto(request.getQuestionText(), null,
                 request.getQuestionImageUrl(), request.getAnswers());
         questionDto = questionService.saveQuestion(questionDto);
         return ResponseEntity.created(new URI("/api/v1/questions/" + questionDto.getId()))

@@ -48,6 +48,7 @@ public class QuestionServiceImpl implements IQuestionService {
     public QuestionDto saveQuestion(QuestionDto questionDto) {
         Question question = Mapper.map(questionDto, Question.class);
         question.setDifficulty(Difficulty.MEDIUM);
+        question.setIsTemporal(true);
         question = questionRepository.save(question);
         return Mapper.map(question, QuestionDto.class);
     }

@@ -13,7 +13,6 @@ import java.util.List;
 @ToString
 public class AddingQuestionRequest {
     private String questionImageUrl;
-    private Category category;
     private String questionText;
     private List<AnswerDto> answers;
 }
