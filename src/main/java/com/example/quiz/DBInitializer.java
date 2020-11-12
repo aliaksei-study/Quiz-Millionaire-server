@@ -26,41 +26,49 @@ public class DBInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Category category = new Category("JAVA_PROGRAMMING");
+        Category category = new Category("History");
         categoryRepository.save(category);
         List<Answer> answerList = new ArrayList<>();
-        saveQuestion(new Answer("14", false), new Answer("13", false),
-                new Answer("12", false), new Answer("15", true),
-                answerList, "Сколько версий JDK существует?", null, false, Difficulty.EASY, category);
-        saveQuestion(new Answer("Thread", false), new Answer("Exception", false),
-                new Answer("Object", true), new Answer("Subject", false),
-                answerList, "Какой класс является суперклассом для всех остальных классов?", null, false, Difficulty.EASY, category);
-        saveQuestion(new Answer("ArrayList", true), new Answer("TreeSet", false),
-                new Answer("HashMap", false), new Answer("LinkedHashSet", false),
-                answerList, "Какой класс позволяет обращаться к элементам коллекции по индексу?", null, false, Difficulty.MEDIUM, category);
-        saveQuestion(new Answer("TreeMap", false), new Answer("HashSet", false),
-                new Answer("TreeSet", true), new Answer("ArrayList", false),
-                answerList, "Какой класс хранит элементы коллекции отсортированными?", null, false, Difficulty.MEDIUM, category);
-        saveQuestion(new Answer("Интерфейсам", true), new Answer("Классам", false),
-                new Answer("Объектам", false), new Answer("Методам", false),
-                answerList, "Благодаря чему поддерживается множественное наследование в Java?", null, false, Difficulty.EASY, category);
-        saveQuestion(new Answer("compare(Object o1)", false), new Answer("comparator(Object o1, Object o2)", false),
-                new Answer("compareTo(Object o1, Object o2)", true), new Answer("Не нужно переопределять", false),
-                answerList, "Какой метод необходимо переопределить для использования интерфейса Comparator?", null, false, Difficulty.HARD, category);
-        saveQuestion(new Answer("6", false), new Answer("7", false),
-                new Answer("9", false), new Answer("8", true),
-                answerList, "Сколько примитивных типов в java?", null, false, Difficulty.EASY, category);
-        saveQuestion(new Answer("MyClass extends String", false), new Answer("MyClass implements String", false),
-                new Answer("Нельзя создать", true), new Answer("MyClass extends StringBuilder", false),
-                answerList, "Как создать наследника класса String?", null, false, Difficulty.EASY, category);
-        saveQuestion(new Answer("Лямбда-вырадения", false), new Answer("Модульность", true),
-                new Answer("Optional", false), new Answer("try with resources", false),
-                answerList, "Что нового появилось в Java 9?", null, false, Difficulty.NIGHTMARE, category);
-        saveQuestion(new Answer("в Optional метод orElseThrow", true), new Answer("jShell", false),
-                new Answer("Reactive streams", false), new Answer("binary literals", false),
-                answerList, "Что нового появилось в Java 10?", null, false, Difficulty.HARD, category);
+        saveQuestion(new Answer("1941", false), new Answer("1938", false),
+                new Answer("1940", false), new Answer("1939", true),
+                answerList, "В каком году началасть Вторая мировая война?", null, false, Difficulty.EASY, category);
 
-        Category secondCategory = new Category("COUNTRIES");
+        saveQuestion(new Answer("1 сентября 1939", false), new Answer("23 июня 1941", false),
+                new Answer("22 июня 1941", true), new Answer("1 сентября 1941", false),
+                answerList, "Дата начала Великой Отечественной Войны?", null, false, Difficulty.EASY, category);
+
+        saveQuestion(new Answer("1918", true), new Answer("1945", false),
+                new Answer("1917", false), new Answer("1944", false),
+                answerList, "В каком году закончилась Первая мировая война?", null, false, Difficulty.EASY, category);
+
+        Category literatureCategory = new Category("Literature");
+        categoryRepository.save(literatureCategory);
+        saveQuestion(new Answer("Александр Пушкин", false), new Answer("Николай Гоголь", false),
+                new Answer("Лев Толстой", true), new Answer("Иван Тургенев", false),
+                answerList, "Автор романа Война и мир?", null, false, Difficulty.EASY, literatureCategory);
+
+        saveQuestion(new Answer("Уильям Шекспир", true), new Answer("Александр Пушкин", false),
+                new Answer("Иван Тургенев", false), new Answer("Лев Толстой", false),
+                answerList, "Автор трагедии Ромео и Джульетта?", null, false, Difficulty.MEDIUM, literatureCategory);
+
+        saveQuestion(new Answer("Александр Пушкин", false), new Answer("Максим Горький", false),
+                new Answer("Иван Тургенев", true), new Answer("Лев Толстой", false),
+                answerList, "Автор рассказа Муму?", null, false, Difficulty.MEDIUM, literatureCategory);
+
+        saveQuestion(new Answer("Абудаби", false), new Answer("Валенсия", false),
+                new Answer("Ванкувер", false), new Answer("Стратфорд-на-Эйвоне", true),
+                answerList, "В каком городе родился Уильям Шекспир?", null, false, Difficulty.HARD, literatureCategory);
+
+        Category moneyCategory = new Category("Money");
+        saveQuestion(new Answer("Доллар", false), new Answer("Евро", false),
+                new Answer("Фунт стерлингов", true), new Answer("Британский Шиллинг", false),
+                answerList, "Валюта Великобритании?", null, false, Difficulty.MEDIUM, moneyCategory);
+
+        saveQuestion(new Answer("Евро", false), new Answer("Швейцарский франк", true),
+                new Answer("Доллар", false), new Answer("Фунт стерлингов", false),
+                answerList, "Валюта Швейцарии?", null, false, Difficulty.MEDIUM, moneyCategory);
+
+        Category secondCategory = new Category("Geography");
         categoryRepository.save(secondCategory);
         saveQuestion(new Answer("Кирибати", false), new Answer("Палау", false), new Answer("Науру", true),
                 new Answer("Маршалловы острова", false), answerList, "На флаге какой страны Океании изображена линия, символизирующая экватор?",
@@ -77,6 +85,9 @@ public class DBInitializer implements CommandLineRunner {
         saveQuestion(new Answer("Северного Ледовитого", false), new Answer("Атлантического", false), new Answer("Индийского", false),
                 new Answer("Южного", true), answerList, "Воды какого океана не омывают Евразию?", null, false,
                 Difficulty.EASY, secondCategory);
+        saveQuestion(new Answer("Нил", true), new Answer("Амазонка", false),
+                new Answer("Янцзы", false), new Answer("Хуанхэ", false),
+                answerList, "Самая длинная река в мире?", null, false, Difficulty.HARD, secondCategory);
     }
 
     public void saveQuestion(Answer firstAnswer, Answer secondAnswer, Answer thirdAnswer, Answer fourthAnswer,
