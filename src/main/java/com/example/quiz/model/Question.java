@@ -3,7 +3,6 @@ package com.example.quiz.model;
 
 import com.example.quiz.model.enumeration.Difficulty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;

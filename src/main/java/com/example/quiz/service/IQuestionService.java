@@ -12,4 +12,5 @@ public interface IQuestionService {
     Question getQuestionById(Long questionId) throws QuestionNotFoundException;
     List<QuestionDto> getQuestions();
     QuestionDto saveQuestion(QuestionDto questionDto);
+    List<QuestionDto> getFifteenRandomQuestions();
 }

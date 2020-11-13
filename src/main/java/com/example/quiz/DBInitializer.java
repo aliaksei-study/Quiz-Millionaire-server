@@ -60,6 +60,7 @@ public class DBInitializer implements CommandLineRunner {
                 answerList, "В каком городе родился Уильям Шекспир?", null, false, Difficulty.HARD, literatureCategory);
 
         Category moneyCategory = new Category("Money");
+        categoryRepository.save(moneyCategory);
         saveQuestion(new Answer("Доллар", false), new Answer("Евро", false),
                 new Answer("Фунт стерлингов", true), new Answer("Британский Шиллинг", false),
                 answerList, "Валюта Великобритании?", null, false, Difficulty.MEDIUM, moneyCategory);

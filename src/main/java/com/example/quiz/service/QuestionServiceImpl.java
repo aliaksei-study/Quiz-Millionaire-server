@@ -7,11 +7,17 @@ import com.example.quiz.model.Question;
 import com.example.quiz.model.enumeration.Difficulty;
 import com.example.quiz.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -51,5 +57,31 @@ public class QuestionServiceImpl implements IQuestionService {
         question.setIsTemporal(true);
         question = questionRepository.save(question);
         return Mapper.map(question, QuestionDto.class);
+    }
+
+    @Override
+    public List<QuestionDto> getFifteenRandomQuestions() {
+        final int numberOfEasyQuestions = 5;
+        final int numberOfMediumQuestions = 4;
+        final int numberOfHardQuestions = 3;
+        final int numberOfNightMareQuestions = 2;
+        List<Question> randomEasyQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.EASY,
+                false, PageRequest.of(0, numberOfEasyQuestions));
+        List<Question> randomTemporalQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.MEDIUM,
+                true, PageRequest.of(0, 1));
+        List<Question> randomMediumQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.MEDIUM,
+                false, PageRequest.of(0, randomTemporalQuestions.size() == 0 ? numberOfEasyQuestions :
+                        numberOfMediumQuestions));
+        List<Question> randomHardQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.HARD,
+                false, PageRequest.of(0, numberOfHardQuestions));
+        List<Question> randomNightMareQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.NIGHTMARE,
+                false, PageRequest.of(0, numberOfNightMareQuestions));
+        return Stream.of(randomEasyQuestions, randomTemporalQuestions, randomMediumQuestions, randomHardQuestions,
+                randomNightMareQuestions)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList())
+                .stream()
+                .map(question -> Mapper.map(question, QuestionDto.class))
+                .collect(Collectors.toList());
     }
 }

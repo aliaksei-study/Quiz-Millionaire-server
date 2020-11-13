@@ -13,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -45,5 +49,19 @@ public class AnswerStatisticsImpl implements IAnswerStatistics {
         } else {
             return Mapper.map(answerStatisticsOptional.get(), AnswerStatisticsDto.class);
         }
+    }
+
+    @Override
+    public Map<Long, Integer> getPlayerAnswersHistogram(Long questionId) throws QuestionNotFoundException {
+        Question question = questionService.getQuestionById(questionId);
+        List<Answer> answers = answerStatisticsRepository.findAnswerStatisticsByQuestion(question).stream()
+                .map(AnswerStatistics::getAnswer)
+                .collect(Collectors.toList());
+        Map<Long, Integer> answersHistogram = new HashMap<>();
+        for(Answer answer: answers) {
+            Integer numberOfOccurrences = answersHistogram.get(answer.getId());
+            answersHistogram.put(answer.getId(), numberOfOccurrences == null ? 1 : numberOfOccurrences + 1);
+        }
+        return answersHistogram;
     }
 }

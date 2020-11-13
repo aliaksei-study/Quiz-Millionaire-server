@@ -6,20 +6,16 @@ import com.example.quiz.exception.AnswerNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.model.Player;
 import com.example.quiz.service.IAnswerStatistics;
-import org.apache.tomcat.util.http.HeaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/answer-statistics")
@@ -41,6 +37,12 @@ public class AnswerStatisticsController {
                 playerAnswerRequest.getAnswerId());
         return ResponseEntity.created(new URI("/api/v1/answer-statistics/" + answerStatisticsDto.getId()))
                 .body(answerStatisticsDto);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<Long, Integer>> getQuestionStatistics(@PathVariable("id") Long id)
+            throws QuestionNotFoundException {
+        return ResponseEntity.ok(answerStatistics.getPlayerAnswersHistogram(id));
     }
 
 }

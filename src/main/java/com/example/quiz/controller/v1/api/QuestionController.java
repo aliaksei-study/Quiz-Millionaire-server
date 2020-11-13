@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -23,9 +24,11 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping
+    @GetMapping(value = "/random-questions")
     public List<QuestionDto> getQuestions() {
-        return questionService.getQuestions();
+        List<QuestionDto> randomQuestions = questionService.getFifteenRandomQuestions();
+        randomQuestions.forEach(questionDto -> Collections.shuffle(questionDto.getAnswers()));
+        return randomQuestions;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

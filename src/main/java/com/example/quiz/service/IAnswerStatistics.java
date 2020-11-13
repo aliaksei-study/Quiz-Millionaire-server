@@ -5,7 +5,10 @@ import com.example.quiz.exception.AnswerNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.model.Player;
 
+import java.util.Map;
+
 public interface IAnswerStatistics {
     AnswerStatisticsDto savePlayerQuestionAnswer(Player player, Long questionId, Long answerId)
             throws QuestionNotFoundException, AnswerNotFoundException;
+    Map<Long, Integer> getPlayerAnswersHistogram(Long questionId) throws QuestionNotFoundException;
 }
