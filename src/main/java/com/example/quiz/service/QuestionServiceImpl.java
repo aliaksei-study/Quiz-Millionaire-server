@@ -1,5 +1,6 @@
 package com.example.quiz.service;
 
+import com.example.quiz.dto.AdminQuestionDto;
 import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
@@ -9,6 +10,8 @@ import com.example.quiz.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,6 +24,7 @@ import java.util.stream.Stream;
 
 @Service
 @Transactional
+@EnableScheduling
 public class QuestionServiceImpl implements IQuestionService {
     private final QuestionRepository questionRepository;
 
@@ -46,8 +50,8 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public List<QuestionDto> getQuestions() {
-        return Mapper.mapAll(questionRepository.findAll(), QuestionDto.class);
+    public List<AdminQuestionDto> getQuestions() {
+        return Mapper.mapAll(questionRepository.findAll(), AdminQuestionDto.class);
     }
 
     @Override
@@ -83,5 +87,11 @@ public class QuestionServiceImpl implements IQuestionService {
                 .stream()
                 .map(question -> Mapper.map(question, QuestionDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Scheduled(fixedRate = 5000)
+    @Override
+    public void processPlayerQuestions() {
+        System.out.println("fucking Fuck");
     }
 }

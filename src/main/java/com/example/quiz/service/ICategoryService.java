@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ICategoryService {
     List<CategoryDto> getCategories();
+    CategoryDto saveCategory(CategoryDto categoryDto);
 }

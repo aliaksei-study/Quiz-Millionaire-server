@@ -8,6 +8,8 @@ import com.example.quiz.dto.PlayerDto;
 import com.example.quiz.exception.*;
 import com.example.quiz.model.Player;
 import com.example.quiz.service.IPlayerService;
+import com.example.quiz.util.CookieUtil;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,15 +21,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 public class PlayerController {
     private IPlayerService playerService;
     private JwtProvider jwtProvider;
     private PasswordEncoder passwordEncoder;
+    private CookieUtil cookieUtil;
 
-    public PlayerController(IPlayerService playerService, JwtProvider jwtProvider, PasswordEncoder passwordEncoder) {
+    public PlayerController(IPlayerService playerService, JwtProvider jwtProvider, PasswordEncoder passwordEncoder, CookieUtil cookieUtil) {
         this.playerService = playerService;
         this.jwtProvider = jwtProvider;
         this.passwordEncoder = passwordEncoder;
+        this.cookieUtil = cookieUtil;
     }
 
     @GetMapping(value = "/players", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,9 +75,12 @@ public class PlayerController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JwtResponse> loginPrincipal(@RequestBody @Valid PlayerAuthRequest principalAuthRequest)
             throws InvalidCredentialsException {
+        HttpHeaders responseHeaders = new HttpHeaders();
         Player player = (Player) playerService.loadUserByUsername(principalAuthRequest.getEmail());
         if(passwordEncoder.matches(principalAuthRequest.getPassword(), player.getPassword())) {
-            return ResponseEntity.ok(new JwtResponse(jwtProvider.generateToken(principalAuthRequest.getEmail())));
+            String token = jwtProvider.generateToken(player.getUsername());
+            responseHeaders.add(HttpHeaders.SET_COOKIE, cookieUtil.createAccessTokenCookie(token, 1000000).toString());
+            return ResponseEntity.ok().headers(responseHeaders).body(new JwtResponse(token));
         }
         throw new InvalidCredentialsException("Invalid email or password");
     }

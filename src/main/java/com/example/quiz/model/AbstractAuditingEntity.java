@@ -22,10 +22,10 @@ public abstract class AbstractAuditingEntity {
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     @JsonIgnore
-    private Instant createdDate = Instant.now();
+    private String createdDate = Instant.now().toString();
 
     @LastModifiedDate
     @Column(name = "last_modified_date")
     @JsonIgnore
-    private Instant lastModifiedDate = Instant.now();
+    private String lastModifiedDate = Instant.now().toString();
 }

@@ -1,6 +1,7 @@
 package com.example.quiz.controller.v1.api;
 
 import com.example.quiz.controller.v1.request.AddingQuestionRequest;
+import com.example.quiz.dto.AdminQuestionDto;
 import com.example.quiz.dto.AnswerDto;
 import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.service.IQuestionService;
@@ -25,10 +26,16 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/random-questions")
-    public List<QuestionDto> getQuestions() {
+    public List<QuestionDto> getRandomQuestions() {
         List<QuestionDto> randomQuestions = questionService.getFifteenRandomQuestions();
         randomQuestions.forEach(questionDto -> Collections.shuffle(questionDto.getAnswers()));
         return randomQuestions;
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<AdminQuestionDto>> getQuestions() {
+        List<AdminQuestionDto> questions = questionService.getQuestions();
+        return ResponseEntity.ok(questions);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
