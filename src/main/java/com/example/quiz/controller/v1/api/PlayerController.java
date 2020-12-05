@@ -1,7 +1,7 @@
 package com.example.quiz.controller.v1.api;
 
 import com.example.quiz.config.jwt.JwtProvider;
-import com.example.quiz.controller.v1.JwtResponse;
+import com.example.quiz.controller.v1.response.JwtResponse;
 import com.example.quiz.controller.v1.request.LikedQuestionRequest;
 import com.example.quiz.controller.v1.request.PlayerAuthRequest;
 import com.example.quiz.dto.PlayerDto;

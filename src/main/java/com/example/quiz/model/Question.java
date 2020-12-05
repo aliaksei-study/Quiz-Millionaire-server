@@ -39,6 +39,12 @@ public class Question extends AbstractAuditingEntity implements Serializable {
     @JoinColumn(name = "question_id")
     List<Answer> answers;
 
+    @ManyToMany(mappedBy = "likedQuestions")
+    private List<Player> likedQuestionPlayers;
+
+    @ManyToMany(mappedBy = "dislikedQuestions")
+    private List<Player> dislikedQuestionPlayers;
+
     public Question() {
 
     }

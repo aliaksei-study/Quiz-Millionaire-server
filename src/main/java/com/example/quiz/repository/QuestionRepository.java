@@ -17,4 +17,8 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
     List<Question> findNthRandomQuestionsByDifficulty(@Param("difficulty")Difficulty difficulty,
                                                 @Param("isTemporal")Boolean isTemporal,
                                                 Pageable pageable);
+
+    List<Question> findAllByDislikedQuestionPlayersIsNotNullAndId(Long id);
+
+    List<Question> findAllByLikedQuestionPlayersIsNotNull();
 }

@@ -2,12 +2,17 @@ package com.example.quiz;
 
 import com.example.quiz.model.Answer;
 import com.example.quiz.model.Category;
+import com.example.quiz.model.Player;
 import com.example.quiz.model.Question;
 import com.example.quiz.model.enumeration.Difficulty;
+import com.example.quiz.model.enumeration.Role;
 import com.example.quiz.repository.CategoryRepository;
+import com.example.quiz.repository.PlayerRepository;
 import com.example.quiz.repository.QuestionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -18,14 +23,22 @@ import java.util.List;
 public class DBInitializer implements CommandLineRunner {
     private final CategoryRepository categoryRepository;
     private final QuestionRepository questionRepository;
+    private final PlayerRepository playerRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DBInitializer(CategoryRepository categoryRepository, QuestionRepository questionRepository) {
+    public DBInitializer(CategoryRepository categoryRepository, QuestionRepository questionRepository,
+                         PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
         this.categoryRepository = categoryRepository;
         this.questionRepository = questionRepository;
+        this.playerRepository = playerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
+        Player player = new Player("alexbeljak99@gmail.com", passwordEncoder.encode("123456"), Role.ADMIN);
+        playerRepository.save(player);
+
         Category category = new Category("History");
         categoryRepository.save(category);
         List<Answer> answerList = new ArrayList<>();

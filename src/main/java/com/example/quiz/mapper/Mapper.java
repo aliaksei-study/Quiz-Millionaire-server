@@ -1,7 +1,5 @@
 package com.example.quiz.mapper;
 
-import com.example.quiz.dto.AdminQuestionDto;
-import com.example.quiz.model.Question;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 

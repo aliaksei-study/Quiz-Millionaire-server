@@ -1,22 +1,18 @@
 package com.example.quiz.controller.v1.request;
 
-import com.example.quiz.dto.AnswerDto;
 import com.example.quiz.dto.CategoryDto;
 import com.example.quiz.model.enumeration.Difficulty;
-import lombok.*;
-
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class AddingQuestionRequest {
+public class EditQuestionRequest {
     private CategoryDto category;
     private Difficulty difficulty;
     private Boolean isTemporal;
-    private String questionImageUrl;
-    private String questionText;
-    private List<AnswerDto> answers;
 }

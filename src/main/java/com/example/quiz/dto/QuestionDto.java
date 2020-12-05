@@ -1,6 +1,7 @@
 package com.example.quiz.dto;
 
 import com.example.quiz.model.Category;
+import com.example.quiz.model.enumeration.Difficulty;
 import lombok.*;
 
 import java.util.List;
@@ -9,20 +10,15 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class QuestionDto {
     private Long id;
     private String questionText;
-    private Category category;
     private String imagePath;
+    private Boolean isTemporal;
+    private Difficulty difficulty;
+    private CategoryDto category;
     private List<AnswerDto> answers;
-
-    public QuestionDto() {
-    }
-
-    public QuestionDto(String questionText, Category category, String imagePath, List<AnswerDto> answers) {
-        this.questionText = questionText;
-        this.category = category;
-        this.imagePath = imagePath;
-        this.answers = answers;
-    }
+    private String createdDate;
+    private String lastModifiedDate;
 }

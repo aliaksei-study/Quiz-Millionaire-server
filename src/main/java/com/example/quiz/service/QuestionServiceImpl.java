@@ -1,24 +1,21 @@
 package com.example.quiz.service;
 
-import com.example.quiz.dto.AdminQuestionDto;
 import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
+import com.example.quiz.model.Category;
 import com.example.quiz.model.Question;
 import com.example.quiz.model.enumeration.Difficulty;
 import com.example.quiz.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,13 +31,17 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public void updateQuestion(QuestionDto questionDto, Long id) {
-
+    public QuestionDto updateQuestion(QuestionDto questionDto, Long id) throws QuestionNotFoundException {
+        Question question = getQuestionById(id);
+        question.setIsTemporal(questionDto.getIsTemporal());
+        question.setDifficulty(questionDto.getDifficulty());
+        question.setCategory(Mapper.map(questionDto.getCategory(), Category.class));
+        return Mapper.map(questionRepository.save(question), QuestionDto.class);
     }
 
     @Override
     public void deleteQuestion(Long id) {
-
+        questionRepository.deleteById(id);
     }
 
     @Override
@@ -50,15 +51,17 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public List<AdminQuestionDto> getQuestions() {
-        return Mapper.mapAll(questionRepository.findAll(), AdminQuestionDto.class);
+    public List<QuestionDto> getQuestions() {
+        return Mapper.mapAll(questionRepository.findAll(), QuestionDto.class);
     }
 
     @Override
     public QuestionDto saveQuestion(QuestionDto questionDto) {
         Question question = Mapper.map(questionDto, Question.class);
-        question.setDifficulty(Difficulty.MEDIUM);
-        question.setIsTemporal(true);
+        if(question.getDifficulty() == null || question.getCategory() == null) {
+            question.setDifficulty(Difficulty.MEDIUM);
+            question.setIsTemporal(true);
+        }
         question = questionRepository.save(question);
         return Mapper.map(question, QuestionDto.class);
     }
@@ -89,9 +92,11 @@ public class QuestionServiceImpl implements IQuestionService {
                 .collect(Collectors.toList());
     }
 
-    @Scheduled(fixedRate = 5000)
+    //@Scheduled(fixedRate = 5000)
     @Override
     public void processPlayerQuestions() {
-        System.out.println("fucking Fuck");
+        List<Question> dislikedQuestions = questionRepository.findAllByDislikedQuestionPlayersIsNotNullAndId(4L);
+        List<Question> likedQuestions = questionRepository.findAllByLikedQuestionPlayersIsNotNull();
+        dislikedQuestions.forEach((question -> System.out.println(question.getQuestionText())));
     }
 }
