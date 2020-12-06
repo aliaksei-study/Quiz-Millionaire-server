@@ -18,7 +18,9 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
                                                 @Param("isTemporal")Boolean isTemporal,
                                                 Pageable pageable);
 
+    List<Question> findAllByIsTemporal(Boolean isTemporal);
+
     List<Question> findAllByDislikedQuestionPlayersIsNotNullAndId(Long id);
 
-    List<Question> findAllByLikedQuestionPlayersIsNotNull();
+    List<Question> findAllByLikedQuestionPlayersIsNotNullAndId(Long id);
 }

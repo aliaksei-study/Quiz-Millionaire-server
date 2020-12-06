@@ -4,8 +4,11 @@ import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Category;
+import com.example.quiz.model.Player;
 import com.example.quiz.model.Question;
 import com.example.quiz.model.enumeration.Difficulty;
+import com.example.quiz.repository.AnswerStatisticsRepository;
+import com.example.quiz.repository.PlayerRepository;
 import com.example.quiz.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -24,10 +27,15 @@ import java.util.stream.Stream;
 @EnableScheduling
 public class QuestionServiceImpl implements IQuestionService {
     private final QuestionRepository questionRepository;
+    private final AnswerStatisticsRepository answerStatisticsRepository;
+    private final PlayerRepository playerRepository;
 
     @Autowired
-    public QuestionServiceImpl(QuestionRepository questionRepository) {
+    public QuestionServiceImpl(QuestionRepository questionRepository,
+                               AnswerStatisticsRepository answerStatisticsRepository, PlayerRepository playerRepository) {
         this.questionRepository = questionRepository;
+        this.answerStatisticsRepository = answerStatisticsRepository;
+        this.playerRepository = playerRepository;
     }
 
     @Override
@@ -40,8 +48,22 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public void deleteQuestion(Long id) {
-        questionRepository.deleteById(id);
+    public void deleteQuestion(Long id) throws QuestionNotFoundException {
+        Question question = getQuestionById(id);
+        answerStatisticsRepository.deleteAll(answerStatisticsRepository.findAnswerStatisticsByQuestion(question));
+        processPlayersWithDeletedQuestion(question);
+        questionRepository.delete(question);
+    }
+
+    public void processPlayersWithDeletedQuestion(Question question) {
+        List<Player> playersByLikedQuestion = playerRepository.findPlayerByLikedQuestions(question);
+        List<Player> playersByDislikedQuestion = playerRepository.findPlayersByDislikedQuestions(question);
+        playersByLikedQuestion.forEach((player) -> player.getLikedQuestions()
+                .removeIf((likedQuestion) -> likedQuestion.equals(question)));
+        playersByDislikedQuestion.forEach((player) -> player.getDislikedQuestions()
+                .removeIf((likedQuestion) -> likedQuestion.equals(question)));
+        playerRepository.saveAll(playersByLikedQuestion);
+        playerRepository.saveAll(playersByDislikedQuestion);
     }
 
     @Override
@@ -83,6 +105,10 @@ public class QuestionServiceImpl implements IQuestionService {
                 false, PageRequest.of(0, numberOfHardQuestions));
         List<Question> randomNightMareQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.NIGHTMARE,
                 false, PageRequest.of(0, numberOfNightMareQuestions));
+        if(randomTemporalQuestions.size() == 1) {
+            randomMediumQuestions.remove(randomMediumQuestions.size() - 1);
+            randomMediumQuestions.add(randomTemporalQuestions.get(0));
+        }
         return Stream.of(randomEasyQuestions, randomTemporalQuestions, randomMediumQuestions, randomHardQuestions,
                 randomNightMareQuestions)
                 .flatMap(Collection::stream)
@@ -92,11 +118,28 @@ public class QuestionServiceImpl implements IQuestionService {
                 .collect(Collectors.toList());
     }
 
-    //@Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 500000)
     @Override
     public void processPlayerQuestions() {
-        List<Question> dislikedQuestions = questionRepository.findAllByDislikedQuestionPlayersIsNotNullAndId(4L);
-        List<Question> likedQuestions = questionRepository.findAllByLikedQuestionPlayersIsNotNull();
-        dislikedQuestions.forEach((question -> System.out.println(question.getQuestionText())));
+        final int minimalNumberOfLikes = 1;
+        List<Question> temporalQuestions = questionRepository.findAllByIsTemporal(true);
+        if(temporalQuestions.size() > 0) {
+            temporalQuestions.forEach((question) -> {
+                int numberOfDislikes = questionRepository
+                        .findAllByDislikedQuestionPlayersIsNotNullAndId(question.getId()).size();
+                int numberOfLikes = questionRepository
+                        .findAllByLikedQuestionPlayersIsNotNullAndId(question.getId()).size();
+                if(numberOfLikes > minimalNumberOfLikes && numberOfLikes > numberOfDislikes) {
+                    question.setIsTemporal(false);
+                    questionRepository.save(question);
+                } else if(numberOfDislikes > 2 * numberOfLikes && numberOfLikes < minimalNumberOfLikes) {
+                    try {
+                        deleteQuestion(question.getId());
+                    } catch (QuestionNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 }

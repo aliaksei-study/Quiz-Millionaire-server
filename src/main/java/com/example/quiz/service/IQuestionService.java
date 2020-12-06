@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IQuestionService {
     QuestionDto updateQuestion(QuestionDto questionDto, Long id) throws QuestionNotFoundException;
-    void deleteQuestion(Long id);
+    void deleteQuestion(Long id) throws QuestionNotFoundException;
     Question getQuestionById(Long questionId) throws QuestionNotFoundException;
     List<QuestionDto> getQuestions();
     QuestionDto saveQuestion(QuestionDto questionDto);
