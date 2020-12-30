@@ -91,7 +91,7 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public List<QuestionDto> getFifteenRandomQuestions() {
         final int numberOfEasyQuestions = 5;
-        final int numberOfMediumQuestions = 4;
+        final int numberOfMediumQuestions = 5;
         final int numberOfHardQuestions = 3;
         final int numberOfNightMareQuestions = 2;
         List<Question> randomEasyQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.EASY,
@@ -109,7 +109,7 @@ public class QuestionServiceImpl implements IQuestionService {
             randomMediumQuestions.remove(randomMediumQuestions.size() - 1);
             randomMediumQuestions.add(randomTemporalQuestions.get(0));
         }
-        return Stream.of(randomEasyQuestions, randomTemporalQuestions, randomMediumQuestions, randomHardQuestions,
+        return Stream.of(randomEasyQuestions, randomMediumQuestions, randomHardQuestions,
                 randomNightMareQuestions)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList())

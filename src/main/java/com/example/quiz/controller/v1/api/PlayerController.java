@@ -6,6 +6,7 @@ import com.example.quiz.controller.v1.request.LikedQuestionRequest;
 import com.example.quiz.controller.v1.request.PlayerAuthRequest;
 import com.example.quiz.dto.PlayerDto;
 import com.example.quiz.exception.*;
+import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Player;
 import com.example.quiz.service.IPlayerService;
 import com.example.quiz.util.CookieUtil;
@@ -83,5 +84,13 @@ public class PlayerController {
             return ResponseEntity.ok().headers(responseHeaders).body(new JwtResponse(token));
         }
         throw new InvalidCredentialsException("Invalid email or password");
+    }
+
+    @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PlayerDto> getAuthenticatedPlayer(@AuthenticationPrincipal Player player) {
+        if(player == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(Mapper.map(player, PlayerDto.class));
     }
 }

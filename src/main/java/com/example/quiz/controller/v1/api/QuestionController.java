@@ -45,7 +45,7 @@ public class QuestionController {
             throws URISyntaxException {
         QuestionDto questionDto = new QuestionDto(null, request.getQuestionText(), request.getQuestionImageUrl(),
                 request.getIsTemporal(), request.getDifficulty(), request.getCategory(), request.getAnswers(),
-                null, null);
+                null, null, null);
         questionDto = questionService.saveQuestion(questionDto);
         return ResponseEntity.created(new URI("/api/v1/questions/" + questionDto.getId()))
                 .body(questionDto);

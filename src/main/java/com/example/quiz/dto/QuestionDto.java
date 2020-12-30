@@ -1,6 +1,5 @@
 package com.example.quiz.dto;
 
-import com.example.quiz.model.Category;
 import com.example.quiz.model.enumeration.Difficulty;
 import lombok.*;
 
@@ -21,4 +20,5 @@ public class QuestionDto {
     private List<AnswerDto> answers;
     private String createdDate;
     private String lastModifiedDate;
+    private String createdBy;
 }
