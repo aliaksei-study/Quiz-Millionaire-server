@@ -2,6 +2,7 @@ package com.example.quiz.controller.v1.api;
 
 import com.example.quiz.controller.v1.request.PlayerAnswerRequest;
 import com.example.quiz.dto.AnswerStatisticsDto;
+import com.example.quiz.dto.QuestionAnswersStatisticsDto;
 import com.example.quiz.exception.AnswerNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.model.Player;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -44,6 +46,11 @@ public class AnswerStatisticsController {
     public ResponseEntity<Map<Long, Integer>> getQuestionStatistics(@PathVariable("id") Long id)
             throws QuestionNotFoundException {
         return ResponseEntity.ok(answerStatistics.getPlayerAnswersHistogram(id));
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<QuestionAnswersStatisticsDto>> getQuestionAnswersHistograms() {
+        return ResponseEntity.ok(answerStatistics.getQuestionAnswersHistograms());
     }
 
 }

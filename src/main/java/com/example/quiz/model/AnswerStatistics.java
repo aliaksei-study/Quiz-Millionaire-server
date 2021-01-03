@@ -25,7 +25,7 @@ public class AnswerStatistics implements Serializable {
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "player_id")
     private Player player;
 

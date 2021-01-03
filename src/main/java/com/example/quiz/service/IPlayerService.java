@@ -1,6 +1,7 @@
 package com.example.quiz.service;
 
 import com.example.quiz.dto.PlayerDto;
+import com.example.quiz.exception.PlayerNotFoundException;
 import com.example.quiz.exception.QuestionAlreadyDislikedException;
 import com.example.quiz.exception.QuestionAlreadyLikedException;
 import com.example.quiz.exception.QuestionNotFoundException;
@@ -15,4 +16,5 @@ public interface IPlayerService extends UserDetailsService {
     List<PlayerDto> getAllPlayers();
     PlayerDto likeQuestion(Long questionId, Player player) throws QuestionNotFoundException, QuestionAlreadyLikedException;
     PlayerDto dislikeQuestion(Long questionId, Player player) throws QuestionNotFoundException, QuestionAlreadyDislikedException;
+    void deletePlayers(List<Long> playerIds) throws PlayerNotFoundException;
 }

@@ -47,4 +47,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiException apiException = new ApiException(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
     }
+
+    @ExceptionHandler({PlayerNotFoundException.class})
+    public ResponseEntity<ApiException> handlePlayerNotFound(PlayerNotFoundException ex) {
+        ApiException apiException = new ApiException(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
+    }
 }

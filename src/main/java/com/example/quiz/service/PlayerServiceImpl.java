@@ -1,6 +1,7 @@
 package com.example.quiz.service;
 
 import com.example.quiz.dto.PlayerDto;
+import com.example.quiz.exception.PlayerNotFoundException;
 import com.example.quiz.exception.QuestionAlreadyDislikedException;
 import com.example.quiz.exception.QuestionAlreadyLikedException;
 import com.example.quiz.exception.QuestionNotFoundException;
@@ -81,5 +82,13 @@ public class PlayerServiceImpl implements IPlayerService {
             throw new QuestionAlreadyDislikedException("question with id: " + questionId + " already disliked");
         }
         return Mapper.map(player, PlayerDto.class);
+    }
+
+    @Override
+    public void deletePlayers(List<Long> playerIds) throws PlayerNotFoundException {
+
+    }
+
+    public void processQuestionsWithDeletedPlayerIds(List<Long> playerIds) {
     }
 }

@@ -27,7 +27,7 @@ public class Statistics {
     @Column(name = "score")
     private int score;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "player_id")
     private Player player;
 

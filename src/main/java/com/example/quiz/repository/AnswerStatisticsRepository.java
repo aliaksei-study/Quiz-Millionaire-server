@@ -13,4 +13,5 @@ public interface AnswerStatisticsRepository extends CrudRepository<AnswerStatist
     Optional<AnswerStatistics> findAnswerStatisticsByAnswerAndQuestionAndPlayer(Answer answer, Question question,
                                                                                    Player player);
     List<AnswerStatistics> findAnswerStatisticsByQuestion(Question question);
+    List<AnswerStatistics> findAll();
 }

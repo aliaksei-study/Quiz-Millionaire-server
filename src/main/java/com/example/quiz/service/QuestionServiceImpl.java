@@ -1,6 +1,8 @@
 package com.example.quiz.service;
 
+import com.example.quiz.dto.CategoryDto;
 import com.example.quiz.dto.QuestionDto;
+import com.example.quiz.dto.SatisfiedQuestionStatisticsDto;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Category;
@@ -70,6 +72,16 @@ public class QuestionServiceImpl implements IQuestionService {
     public Question getQuestionById(Long questionId) throws QuestionNotFoundException {
         return questionRepository.findById(questionId).orElseThrow(() ->
                 new QuestionNotFoundException("question with id: " + questionId + " is not exist"));
+    }
+
+    @Override
+    public List<SatisfiedQuestionStatisticsDto> getSatisfiedQuestionStatistics() {
+        return questionRepository.findAll()
+                .stream()
+                .map((question) -> new SatisfiedQuestionStatisticsDto(question.getQuestionText(),
+                question.getDifficulty(), Mapper.map(question.getCategory(), CategoryDto.class),
+                        question.getLikedQuestionPlayers().size(), question.getDislikedQuestionPlayers().size()))
+                .collect(Collectors.toList());
     }
 
     @Override

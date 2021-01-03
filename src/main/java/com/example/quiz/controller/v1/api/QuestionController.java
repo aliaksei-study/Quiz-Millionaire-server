@@ -4,6 +4,7 @@ import com.example.quiz.controller.v1.response.PlayerQuestionResponse;
 import com.example.quiz.controller.v1.request.AddingQuestionRequest;
 import com.example.quiz.controller.v1.request.EditQuestionRequest;
 import com.example.quiz.dto.QuestionDto;
+import com.example.quiz.dto.SatisfiedQuestionStatisticsDto;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.service.IQuestionService;
@@ -18,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 @RequestMapping("/api/v1/questions")
 public class QuestionController {
     private final IQuestionService questionService;
@@ -38,6 +39,11 @@ public class QuestionController {
     public ResponseEntity<List<QuestionDto>> getQuestions() {
         List<QuestionDto> questions = questionService.getQuestions();
         return ResponseEntity.ok(questions);
+    }
+
+    @GetMapping(value = "/satisfied-statistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SatisfiedQuestionStatisticsDto>> getSatisfiedQuestionStatistics() {
+        return ResponseEntity.ok(questionService.getSatisfiedQuestionStatistics());
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
