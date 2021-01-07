@@ -7,10 +7,7 @@ import com.example.quiz.dto.QuestionAnswersStatisticsDto;
 import com.example.quiz.exception.AnswerNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
-import com.example.quiz.model.Answer;
-import com.example.quiz.model.AnswerStatistics;
-import com.example.quiz.model.Player;
-import com.example.quiz.model.Question;
+import com.example.quiz.model.*;
 import com.example.quiz.repository.AnswerStatisticsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,6 +76,11 @@ public class AnswerStatisticsImpl implements IAnswerStatistics {
         return new ArrayList<>(questionAnswers.values());
     }
 
+    @Override
+    public void deleteAnswerStatisticsByPlayer(Player player) {
+        answerStatisticsRepository.deleteAll(answerStatisticsRepository.findAnswerStatisticsByPlayer(player));
+    }
+
     public QuestionAnswersStatisticsDto changeNumberOfAnswersInQuestionAnswersStatistics(
             QuestionAnswersStatisticsDto changedStats, Answer answer) {
         changedStats.setAnswerHistograms(changedStats.getAnswerHistograms()
@@ -93,11 +95,12 @@ public class AnswerStatisticsImpl implements IAnswerStatistics {
     public QuestionAnswersStatisticsDto createInitialQuestionAnswerStatisticsInstance(
             AnswerStatistics answerStatistics) {
         return new QuestionAnswersStatisticsDto(answerStatistics.getQuestion().getQuestionText(),
-                answerStatistics.getQuestion().getDifficulty(), Mapper.map(answerStatistics.getQuestion().getCategory(),
+                answerStatistics.getQuestion().getDifficulty(), Mapper.map(answerStatistics.getQuestion()
+                        .getCategory() == null ? new Category() : answerStatistics.getQuestion().getCategory(),
                 CategoryDto.class), answerStatistics.getQuestion().getAnswers()
-                        .stream()
-                        .map((answer) -> new AnswerHistogramDto(answer,
-                                answerStatistics.getAnswer().getId().equals(answer.getId()) ? 1 : 0))
-                        .collect(Collectors.toList()));
+                .stream()
+                .map((answer) -> new AnswerHistogramDto(answer,
+                        answerStatistics.getAnswer().getId().equals(answer.getId()) ? 1 : 0))
+                .collect(Collectors.toList()));
     }
 }

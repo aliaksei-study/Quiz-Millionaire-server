@@ -3,6 +3,7 @@ package com.example.quiz.controller.v1.api;
 import com.example.quiz.controller.v1.request.StatisticsRequest;
 import com.example.quiz.dto.PlayerDto;
 import com.example.quiz.dto.StatisticsDto;
+import com.example.quiz.exception.PlayerNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Player;
 import com.example.quiz.service.IStatisticsService;
@@ -19,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/statistics")
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 public class StatisticsController {
     private IStatisticsService statisticsService;
 
@@ -42,5 +42,11 @@ public class StatisticsController {
         statisticsDto = statisticsService.saveStatistics(statisticsDto, player);
         return ResponseEntity.created(new URI("/api/v1/statistics/" + statisticsDto.getId()))
                 .body(statisticsDto);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<String> deletePlayers(@PathVariable("id") List<Long> playerStatisticIds) {
+        statisticsService.deletePlayerStatistics(playerStatisticIds);
+        return ResponseEntity.ok("Player statistics successfully deleted");
     }
 }

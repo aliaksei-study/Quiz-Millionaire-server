@@ -16,5 +16,4 @@ public interface IPlayerService extends UserDetailsService {
     List<PlayerDto> getAllPlayers();
     PlayerDto likeQuestion(Long questionId, Player player) throws QuestionNotFoundException, QuestionAlreadyLikedException;
     PlayerDto dislikeQuestion(Long questionId, Player player) throws QuestionNotFoundException, QuestionAlreadyDislikedException;
-    void deletePlayers(List<Long> playerIds) throws PlayerNotFoundException;
 }

@@ -93,9 +93,4 @@ public class PlayerController {
         }
         return ResponseEntity.ok(Mapper.map(player, PlayerDto.class));
     }
-
-    @DeleteMapping(value = "/players/{id}")
-    public void deletePlayers(@PathVariable("id") List<Long> id) throws PlayerNotFoundException {
-
-    }
 }

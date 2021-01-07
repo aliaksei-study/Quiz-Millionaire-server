@@ -79,8 +79,10 @@ public class QuestionServiceImpl implements IQuestionService {
         return questionRepository.findAll()
                 .stream()
                 .map((question) -> new SatisfiedQuestionStatisticsDto(question.getQuestionText(),
-                question.getDifficulty(), Mapper.map(question.getCategory(), CategoryDto.class),
+                        question.getDifficulty(), Mapper.map(question.getCategory() == null ? new Category() :
+                        question.getCategory(), CategoryDto.class),
                         question.getLikedQuestionPlayers().size(), question.getDislikedQuestionPlayers().size()))
+                .filter((statistic) -> statistic.getNumberOfDislikes() > 0 || statistic.getNumberOfLikes() > 0)
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +94,7 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public QuestionDto saveQuestion(QuestionDto questionDto) {
         Question question = Mapper.map(questionDto, Question.class);
-        if(question.getDifficulty() == null || question.getCategory() == null) {
+        if (question.getDifficulty() == null || question.getCategory() == null) {
             question.setDifficulty(Difficulty.MEDIUM);
             question.setIsTemporal(true);
         }
@@ -117,7 +119,7 @@ public class QuestionServiceImpl implements IQuestionService {
                 false, PageRequest.of(0, numberOfHardQuestions));
         List<Question> randomNightMareQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.NIGHTMARE,
                 false, PageRequest.of(0, numberOfNightMareQuestions));
-        if(randomTemporalQuestions.size() == 1) {
+        if (randomTemporalQuestions.size() == 1) {
             randomMediumQuestions.remove(randomMediumQuestions.size() - 1);
             randomMediumQuestions.add(randomTemporalQuestions.get(0));
         }
@@ -135,16 +137,16 @@ public class QuestionServiceImpl implements IQuestionService {
     public void processPlayerQuestions() {
         final int minimalNumberOfLikes = 1;
         List<Question> temporalQuestions = questionRepository.findAllByIsTemporal(true);
-        if(temporalQuestions.size() > 0) {
+        if (temporalQuestions.size() > 0) {
             temporalQuestions.forEach((question) -> {
                 int numberOfDislikes = questionRepository
                         .findAllByDislikedQuestionPlayersIsNotNullAndId(question.getId()).size();
                 int numberOfLikes = questionRepository
                         .findAllByLikedQuestionPlayersIsNotNullAndId(question.getId()).size();
-                if(numberOfLikes > minimalNumberOfLikes && numberOfLikes > numberOfDislikes) {
+                if (numberOfLikes > minimalNumberOfLikes && numberOfLikes > numberOfDislikes) {
                     question.setIsTemporal(false);
                     questionRepository.save(question);
-                } else if(numberOfDislikes > 2 * numberOfLikes && numberOfLikes < minimalNumberOfLikes) {
+                } else if (numberOfDislikes > 2 * numberOfLikes && numberOfLikes < minimalNumberOfLikes) {
                     try {
                         deleteQuestion(question.getId());
                     } catch (QuestionNotFoundException e) {

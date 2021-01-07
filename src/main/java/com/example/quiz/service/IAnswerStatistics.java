@@ -14,4 +14,5 @@ public interface IAnswerStatistics {
             throws QuestionNotFoundException, AnswerNotFoundException;
     Map<Long, Integer> getPlayerAnswersHistogram(Long questionId) throws QuestionNotFoundException;
     List<QuestionAnswersStatisticsDto> getQuestionAnswersHistograms();
+    void deleteAnswerStatisticsByPlayer(Player player);
 }

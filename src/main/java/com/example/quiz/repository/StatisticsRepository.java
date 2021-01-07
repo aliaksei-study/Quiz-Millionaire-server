@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface StatisticsRepository extends CrudRepository<Statistics, Long> {
     Optional<Statistics> findStatisticsByPlayer(Player player);
     List<Statistics> findAll();
+    Optional<Statistics> findById(Long statisticsId);
 }

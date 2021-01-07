@@ -84,11 +84,4 @@ public class PlayerServiceImpl implements IPlayerService {
         return Mapper.map(player, PlayerDto.class);
     }
 
-    @Override
-    public void deletePlayers(List<Long> playerIds) throws PlayerNotFoundException {
-
-    }
-
-    public void processQuestionsWithDeletedPlayerIds(List<Long> playerIds) {
-    }
 }
