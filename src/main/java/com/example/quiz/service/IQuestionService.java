@@ -12,8 +12,8 @@ public interface IQuestionService {
     void deleteQuestion(Long id) throws QuestionNotFoundException;
     Question getQuestionById(Long questionId) throws QuestionNotFoundException;
     List<SatisfiedQuestionStatisticsDto> getSatisfiedQuestionStatistics();
-    List<QuestionDto> getQuestions();
+    List<QuestionDto> getQuestions(String language);
     QuestionDto saveQuestion(QuestionDto questionDto);
-    List<QuestionDto> getFifteenRandomQuestions();
+    List<QuestionDto> getFifteenRandomQuestions(String Language);
     void processPlayerQuestions();
 }

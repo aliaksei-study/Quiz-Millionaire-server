@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,16 +17,17 @@ public class Answer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "answer_text")
-    private String answerText;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "answer_id")
+    List<LocalizedAnswer> localizedAnswers;
 
     @Column(name = "isCorrect")
     private Boolean isCorrect;
 
     public Answer() {}
 
-    public Answer(String answerText, boolean isCorrect) {
-        this.answerText = answerText;
+    public Answer(List<LocalizedAnswer> localizedAnswers, Boolean isCorrect) {
+        this.localizedAnswers = localizedAnswers;
         this.isCorrect = isCorrect;
     }
 
@@ -34,18 +36,15 @@ public class Answer implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null || obj.getClass() != this.getClass()) {
+        if (null == obj || this.getClass() != obj.getClass()) {
             return false;
         }
         Answer answer = (Answer) obj;
-        if (answer.answerText != null) {
-            return answer.answerText.equals(this.answerText) && this.isCorrect == answer.isCorrect;
-        }
-        return false;
+        return this.getId().equals(answer.getId());
     }
 
     @Override
     public int hashCode() {
-        return (31 * ((null == answerText) ? 0 : answerText.hashCode()) + ((Boolean) isCorrect).hashCode());
+        return localizedAnswers.hashCode() + isCorrect.hashCode();
     }
 }

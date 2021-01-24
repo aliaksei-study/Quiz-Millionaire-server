@@ -1,6 +1,5 @@
 package com.example.quiz.service;
 
-import com.example.quiz.dto.CategoryDto;
 import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.dto.SatisfiedQuestionStatisticsDto;
 import com.example.quiz.exception.QuestionNotFoundException;
@@ -76,18 +75,19 @@ public class QuestionServiceImpl implements IQuestionService {
 
     @Override
     public List<SatisfiedQuestionStatisticsDto> getSatisfiedQuestionStatistics() {
-        return questionRepository.findAll()
-                .stream()
-                .map((question) -> new SatisfiedQuestionStatisticsDto(question.getQuestionText(),
-                        question.getDifficulty(), Mapper.map(question.getCategory() == null ? new Category() :
-                        question.getCategory(), CategoryDto.class),
-                        question.getLikedQuestionPlayers().size(), question.getDislikedQuestionPlayers().size()))
-                .filter((statistic) -> statistic.getNumberOfDislikes() > 0 || statistic.getNumberOfLikes() > 0)
-                .collect(Collectors.toList());
+//        return questionRepository.findAll()
+//                .stream()
+//                .map((question) -> new SatisfiedQuestionStatisticsDto(question.getQuestionText(),
+//                        question.getDifficulty(), Mapper.map(question.getCategory() == null ? new Category() :
+//                        question.getCategory(), CategoryDto.class),
+//                        question.getLikedQuestionPlayers().size(), question.getDislikedQuestionPlayers().size()))
+//                .filter((statistic) -> statistic.getNumberOfDislikes() > 0 || statistic.getNumberOfLikes() > 0)
+//                .collect(Collectors.toList());
+        return List.of();
     }
 
     @Override
-    public List<QuestionDto> getQuestions() {
+    public List<QuestionDto> getQuestions(String language) {
         return Mapper.mapAll(questionRepository.findAll(), QuestionDto.class);
     }
 
@@ -103,22 +103,22 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public List<QuestionDto> getFifteenRandomQuestions() {
+    public List<QuestionDto> getFifteenRandomQuestions(String language) {
         final int numberOfEasyQuestions = 5;
         final int numberOfMediumQuestions = 5;
         final int numberOfHardQuestions = 3;
         final int numberOfNightMareQuestions = 2;
-        List<Question> randomEasyQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.EASY,
-                false, PageRequest.of(0, numberOfEasyQuestions));
-        List<Question> randomTemporalQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.MEDIUM,
-                true, PageRequest.of(0, 1));
-        List<Question> randomMediumQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.MEDIUM,
-                false, PageRequest.of(0, randomTemporalQuestions.size() == 0 ? numberOfEasyQuestions :
+        List<Question> randomEasyQuestions = questionRepository.findNthRandomQuestionsByDifficultyAndLanguage(Difficulty.EASY,
+                false, language, PageRequest.of(0, numberOfEasyQuestions));
+        List<Question> randomTemporalQuestions = questionRepository.findNthRandomQuestionsByDifficultyAndLanguage(Difficulty.MEDIUM,
+                true, language, PageRequest.of(0, 1));
+        List<Question> randomMediumQuestions = questionRepository.findNthRandomQuestionsByDifficultyAndLanguage(Difficulty.MEDIUM,
+                false, language, PageRequest.of(0, randomTemporalQuestions.size() == 0 ? numberOfEasyQuestions :
                         numberOfMediumQuestions));
-        List<Question> randomHardQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.HARD,
-                false, PageRequest.of(0, numberOfHardQuestions));
-        List<Question> randomNightMareQuestions = questionRepository.findNthRandomQuestionsByDifficulty(Difficulty.NIGHTMARE,
-                false, PageRequest.of(0, numberOfNightMareQuestions));
+        List<Question> randomHardQuestions = questionRepository.findNthRandomQuestionsByDifficultyAndLanguage(Difficulty.HARD,
+                false, language, PageRequest.of(0, numberOfHardQuestions));
+        List<Question> randomNightMareQuestions = questionRepository.findNthRandomQuestionsByDifficultyAndLanguage(Difficulty.NIGHTMARE,
+                false, language, PageRequest.of(0, numberOfNightMareQuestions));
         if (randomTemporalQuestions.size() == 1) {
             randomMediumQuestions.remove(randomMediumQuestions.size() - 1);
             randomMediumQuestions.add(randomTemporalQuestions.get(0));
@@ -128,7 +128,7 @@ public class QuestionServiceImpl implements IQuestionService {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList())
                 .stream()
-                .map(question -> Mapper.map(question, QuestionDto.class))
+                .map(question -> Mapper.localizedQuestionMap(question, language))
                 .collect(Collectors.toList());
     }
 

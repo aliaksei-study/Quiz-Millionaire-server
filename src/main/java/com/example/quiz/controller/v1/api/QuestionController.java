@@ -29,15 +29,15 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/random-questions")
-    public List<PlayerQuestionResponse> getRandomQuestions() {
-        List<PlayerQuestionResponse> randomQuestions = Mapper.mapAll(questionService.getFifteenRandomQuestions(), PlayerQuestionResponse.class);
+    public List<PlayerQuestionResponse> getRandomQuestions(@RequestHeader("accept-language") String language) {
+        List<PlayerQuestionResponse> randomQuestions = Mapper.mapAll(questionService.getFifteenRandomQuestions(language), PlayerQuestionResponse.class);
         randomQuestions.forEach(questionDto -> Collections.shuffle(questionDto.getAnswers()));
         return randomQuestions;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<QuestionDto>> getQuestions() {
-        List<QuestionDto> questions = questionService.getQuestions();
+    public ResponseEntity<List<QuestionDto>> getQuestions(@RequestHeader("accept-language") String language) {
+        List<QuestionDto> questions = questionService.getQuestions(language);
         return ResponseEntity.ok(questions);
     }
 

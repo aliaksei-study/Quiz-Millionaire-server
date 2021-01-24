@@ -18,8 +18,9 @@ public class Question extends AbstractAuditingEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "question_text")
-    private String questionText;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id")
+    List<LocalizedQuestion> localizedQuestion;
 
     @Column(name = "image_path")
     private String imagePath;
@@ -49,8 +50,8 @@ public class Question extends AbstractAuditingEntity implements Serializable {
 
     }
 
-    public Question(String questionText, String imagePath, Boolean isTemporal, Difficulty difficulty, Category category, List<Answer> answers) {
-        this.questionText = questionText;
+    public Question(List<LocalizedQuestion> localizedQuestions, String imagePath, Boolean isTemporal, Difficulty difficulty, Category category, List<Answer> answers) {
+        this.localizedQuestion = localizedQuestions;
         this.imagePath = imagePath;
         this.isTemporal = isTemporal;
         this.difficulty = difficulty;
@@ -72,8 +73,7 @@ public class Question extends AbstractAuditingEntity implements Serializable {
 
     @Override
     public int hashCode() {
-        return (31 * ((null == questionText) ? 0 : questionText.hashCode()) +
-                31 * ((null == imagePath) ? 0 : imagePath.hashCode()) +
+        return (31 * ((null == imagePath) ? 0 : imagePath.hashCode()) +
                 31 * ((null == difficulty) ? 0 : difficulty.hashCode()) +
                 31 * ((null == category) ? 0 : category.hashCode()) +
                 31 * ((null == isTemporal) ? 0 : isTemporal.hashCode()));
