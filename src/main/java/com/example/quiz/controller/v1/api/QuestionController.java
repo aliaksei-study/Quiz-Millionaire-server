@@ -5,6 +5,7 @@ import com.example.quiz.controller.v1.request.AddingQuestionRequest;
 import com.example.quiz.controller.v1.request.EditQuestionRequest;
 import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.dto.SatisfiedQuestionStatisticsDto;
+import com.example.quiz.exception.LanguageNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.service.IQuestionService;
@@ -47,12 +48,13 @@ public class QuestionController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<QuestionDto> saveQuestion(@RequestBody @Valid AddingQuestionRequest request)
-            throws URISyntaxException {
+    public ResponseEntity<QuestionDto> saveQuestion(@RequestBody @Valid AddingQuestionRequest request,
+                                                    @RequestHeader("accept-language") String language)
+            throws URISyntaxException, LanguageNotFoundException {
         QuestionDto questionDto = new QuestionDto(null, request.getQuestionText(), request.getQuestionImageUrl(),
                 request.getIsTemporal(), request.getDifficulty(), request.getCategory(), request.getAnswers(),
                 null, null, null);
-        questionDto = questionService.saveQuestion(questionDto);
+        questionDto = questionService.saveQuestion(questionDto, language);
         return ResponseEntity.created(new URI("/api/v1/questions/" + questionDto.getId()))
                 .body(questionDto);
     }

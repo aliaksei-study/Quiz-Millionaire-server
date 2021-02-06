@@ -53,4 +53,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiException apiException = new ApiException(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
     }
+
+    @ExceptionHandler({LanguageNotFoundException.class})
+    public ResponseEntity<ApiException> handleLanguageNotFound(LanguageNotFoundException ex) {
+        ApiException apiException = new ApiException(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
+    }
 }

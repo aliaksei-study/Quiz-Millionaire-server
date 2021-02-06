@@ -2,9 +2,11 @@ package com.example.quiz.service;
 
 import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.dto.SatisfiedQuestionStatisticsDto;
+import com.example.quiz.exception.LanguageNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Category;
+import com.example.quiz.model.Language;
 import com.example.quiz.model.Player;
 import com.example.quiz.model.Question;
 import com.example.quiz.model.enumeration.Difficulty;
@@ -31,12 +33,16 @@ public class QuestionServiceImpl implements IQuestionService {
     private final AnswerStatisticsRepository answerStatisticsRepository;
     private final PlayerRepository playerRepository;
 
+    private final ILanguageService languageService;
+
     @Autowired
     public QuestionServiceImpl(QuestionRepository questionRepository,
-                               AnswerStatisticsRepository answerStatisticsRepository, PlayerRepository playerRepository) {
+                               AnswerStatisticsRepository answerStatisticsRepository, PlayerRepository playerRepository,
+                               ILanguageService languageService) {
         this.questionRepository = questionRepository;
         this.answerStatisticsRepository = answerStatisticsRepository;
         this.playerRepository = playerRepository;
+        this.languageService = languageService;
     }
 
     @Override
@@ -88,18 +94,19 @@ public class QuestionServiceImpl implements IQuestionService {
 
     @Override
     public List<QuestionDto> getQuestions(String language) {
-        return Mapper.mapAll(questionRepository.findAll(), QuestionDto.class);
+        return Mapper.mapAllLocalizedQuestionsToQuestionDto(questionRepository.findAll(), language);
     }
 
     @Override
-    public QuestionDto saveQuestion(QuestionDto questionDto) {
-        Question question = Mapper.map(questionDto, Question.class);
+    public QuestionDto saveQuestion(QuestionDto questionDto, String language) throws LanguageNotFoundException {
+        Language languageFromDb = languageService.findLanguageByAbbreviation(language);
+        Question question = Mapper.mapQuestionDtoToLocalizedQuestion(questionDto, languageFromDb);
         if (question.getDifficulty() == null || question.getCategory() == null) {
             question.setDifficulty(Difficulty.MEDIUM);
             question.setIsTemporal(true);
         }
         question = questionRepository.save(question);
-        return Mapper.map(question, QuestionDto.class);
+        return Mapper.mapLocalizedQuestionToQuestionDto(question, language);
     }
 
     @Override
@@ -128,7 +135,7 @@ public class QuestionServiceImpl implements IQuestionService {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList())
                 .stream()
-                .map(question -> Mapper.localizedQuestionMap(question, language))
+                .map(question -> Mapper.mapLocalizedQuestionToQuestionDto(question, language))
                 .collect(Collectors.toList());
     }
 

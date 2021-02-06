@@ -2,6 +2,7 @@ package com.example.quiz.service;
 
 import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.dto.SatisfiedQuestionStatisticsDto;
+import com.example.quiz.exception.LanguageNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.model.Question;
 
@@ -13,7 +14,7 @@ public interface IQuestionService {
     Question getQuestionById(Long questionId) throws QuestionNotFoundException;
     List<SatisfiedQuestionStatisticsDto> getSatisfiedQuestionStatistics();
     List<QuestionDto> getQuestions(String language);
-    QuestionDto saveQuestion(QuestionDto questionDto);
+    QuestionDto saveQuestion(QuestionDto questionDto, String language) throws LanguageNotFoundException;
     List<QuestionDto> getFifteenRandomQuestions(String Language);
     void processPlayerQuestions();
 }
