@@ -12,7 +12,7 @@ import java.util.List;
 public interface QuestionRepository extends PagingAndSortingRepository<Question, Long> {
     List<Question> findAll();
 
-    @Query(value="select q from Question q INNER join q.localizedQuestion lq INNER JOIN lq.language l where l.abbreviation = :language and q.difficulty = :difficulty and q.isTemporal = :isTemporal " +
+    @Query(value="select q from Question q INNER join q.questionTextTranslates lq INNER JOIN lq.language l where l.abbreviation = :language and q.difficulty = :difficulty and q.isTemporal = :isTemporal " +
             "ORDER BY function('RAND')")
     List<Question> findNthRandomQuestionsByDifficultyAndLanguage(@Param("difficulty")Difficulty difficulty,
                                                                  @Param("isTemporal")Boolean isTemporal,

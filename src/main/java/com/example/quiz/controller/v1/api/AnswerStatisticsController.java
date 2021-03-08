@@ -21,7 +21,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/answer-statistics")
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 public class AnswerStatisticsController {
 
     private IAnswerStatistics answerStatistics;

@@ -1,6 +1,7 @@
 package com.example.quiz.controller.v1.response;
 
 import com.example.quiz.dto.AnswerDto;
+import com.example.quiz.dto.CategoryDto;
 import com.example.quiz.model.Category;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,14 +15,14 @@ import java.util.List;
 public class PlayerQuestionResponse {
     private Long id;
     private String questionText;
-    private Category category;
+    private CategoryDto category;
     private String imagePath;
     private List<AnswerDto> answers;
 
     public PlayerQuestionResponse() {
     }
 
-    public PlayerQuestionResponse(String questionText, Category category, String imagePath, List<AnswerDto> answers) {
+    public PlayerQuestionResponse(String questionText, CategoryDto category, String imagePath, List<AnswerDto> answers) {
         this.questionText = questionText;
         this.category = category;
         this.imagePath = imagePath;

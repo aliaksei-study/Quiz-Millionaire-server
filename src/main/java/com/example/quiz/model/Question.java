@@ -19,8 +19,8 @@ public class Question extends AbstractAuditingEntity implements Serializable {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "question_id")
-    List<LocalizedQuestion> localizedQuestion;
+    @JoinColumn(name = "question_translation_id")
+    List<LocalizedQuestion> questionTextTranslates;
 
     @Column(name = "image_path")
     private String imagePath;
@@ -37,8 +37,8 @@ public class Question extends AbstractAuditingEntity implements Serializable {
     private Category category;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "question_id")
-    List<Answer> answers;
+    @JoinColumn(name = "answer_id")
+    private List<Answer> answers;
 
     @ManyToMany(mappedBy = "likedQuestions")
     private List<Player> likedQuestionPlayers;
@@ -50,8 +50,8 @@ public class Question extends AbstractAuditingEntity implements Serializable {
 
     }
 
-    public Question(List<LocalizedQuestion> localizedQuestions, String imagePath, Boolean isTemporal, Difficulty difficulty, Category category, List<Answer> answers) {
-        this.localizedQuestion = localizedQuestions;
+    public Question(List<LocalizedQuestion> questionTextTranslates, String imagePath, Boolean isTemporal, Difficulty difficulty, Category category, List<Answer> answers) {
+        this.questionTextTranslates = questionTextTranslates;
         this.imagePath = imagePath;
         this.isTemporal = isTemporal;
         this.difficulty = difficulty;

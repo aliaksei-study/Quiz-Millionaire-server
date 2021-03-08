@@ -15,10 +15,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 @RequestMapping(value = "/api/v1/categories")
 public class CategoryController {
-    private ICategoryService categoryService;
+    private final ICategoryService categoryService;
 
     @Autowired
     public CategoryController(ICategoryService categoryService) {

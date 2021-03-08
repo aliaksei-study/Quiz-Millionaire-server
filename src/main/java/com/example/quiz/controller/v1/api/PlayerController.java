@@ -22,7 +22,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
-//@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 public class PlayerController {
     private IPlayerService playerService;
     private JwtProvider jwtProvider;

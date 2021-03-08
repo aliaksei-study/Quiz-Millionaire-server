@@ -1,7 +1,6 @@
 package com.example.quiz.mapper;
 
-import com.example.quiz.dto.AnswerDto;
-import com.example.quiz.dto.QuestionDto;
+import com.example.quiz.dto.*;
 import com.example.quiz.model.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mapper {
-    private static ModelMapper modelMapper;
+    private static final ModelMapper modelMapper;
 
     static {
         modelMapper = new ModelMapper();
@@ -20,6 +19,24 @@ public class Mapper {
                 .setFieldMatchingEnabled(true)
                 .setSkipNullEnabled(false)
                 .setMatchingStrategy(MatchingStrategies.STANDARD);
+
+        modelMapper.typeMap(LocalizedCategory.class, TranslatedTextDto.class).addMappings((mapper) ->
+                mapper.map(LocalizedCategory::getCategoryName, TranslatedTextDto::setTranslatedText));
+
+        modelMapper.typeMap(LocalizedQuestion.class, TranslatedTextDto.class).addMappings((mapper) ->
+                mapper.map(LocalizedQuestion::getQuestionText, TranslatedTextDto::setTranslatedText));
+
+        modelMapper.typeMap(LocalizedAnswer.class, TranslatedTextDto.class).addMappings((mapper) ->
+                mapper.map(LocalizedAnswer::getAnswerText, TranslatedTextDto::setTranslatedText));
+
+        modelMapper.typeMap(TranslatedTextDto.class, LocalizedQuestion.class).addMappings((mapper) ->
+                mapper.map(TranslatedTextDto::getTranslatedText, LocalizedQuestion::setQuestionText));
+
+        modelMapper.typeMap(TranslatedTextDto.class, LocalizedAnswer.class).addMappings((mapper) ->
+                mapper.map(TranslatedTextDto::getTranslatedText, LocalizedAnswer::setAnswerText));
+
+        modelMapper.typeMap(TranslatedTextDto.class, LocalizedCategory.class).addMappings((mapper) ->
+                mapper.map(TranslatedTextDto::getTranslatedText, LocalizedCategory::setCategoryName));
     }
 
     public static <S, T> T map(S source, Class<T> targetClass) {
@@ -41,23 +58,27 @@ public class Mapper {
 
     public static QuestionDto mapLocalizedQuestionToQuestionDto(Question question, String language) {
         QuestionDto questionDto = modelMapper.map(question, QuestionDto.class);
-        List<LocalizedQuestion> questionTranslates = question.getLocalizedQuestion()
+        List<LocalizedQuestion> questionTranslates = question.getQuestionTextTranslates()
                 .stream()
                 .filter((item) -> item.getLanguage().getAbbreviation().equals(language))
                 .collect(Collectors.toList());
         if(!questionTranslates.isEmpty()) {
             questionDto.setQuestionText(questionTranslates.get(0).getQuestionText());
         }
+        if(question.getCategory() != null) {
+            questionDto.setCategory(mapLocalizedCategoryToCategoryDto(question.getCategory(), language));
+        }
         questionDto.setAnswers(question.getAnswers()
                 .stream()
                 .map((answer) -> mapLocalizedAnswerToAnswerDto(answer, language))
                 .collect(Collectors.toList()));
+        questionDto.setCategory(mapLocalizedCategoryToCategoryDto(question.getCategory(), language));
         return questionDto;
     }
 
     public static Question mapQuestionDtoToLocalizedQuestion(QuestionDto questionDto, Language language) {
         Question question = modelMapper.map(questionDto, Question.class);
-        question.setLocalizedQuestion(List.of(new LocalizedQuestion(questionDto.getQuestionText(), language)));
+        question.setQuestionTextTranslates(List.of(new LocalizedQuestion(questionDto.getQuestionText(), language)));
         question.setAnswers(questionDto.getAnswers()
                 .stream()
                 .map((item) -> mapAnswerDtoToLocalizedAnswer(item, language))
@@ -81,5 +102,22 @@ public class Mapper {
             answerDto.setAnswerText(answerTranslates.get(0).getAnswerText());
         }
         return answerDto;
+    }
+
+    public static Category mapCategoryDtoToLocalizedCategory(CategoryDto categoryDto, Language language) {
+        Category category = modelMapper.map(categoryDto, Category.class);
+        category.setCategoryNameTranslates(List.of(new LocalizedCategory(categoryDto.getCategoryName(), language)));
+        return category;
+    }
+
+    public static CategoryDto mapLocalizedCategoryToCategoryDto(Category category, String language) {
+        CategoryDto categoryDto = modelMapper.map(category, CategoryDto.class);
+        categoryDto.setCategoryName(category.getCategoryNameTranslates()
+                .stream()
+                .filter((lc) -> lc.getLanguage().getAbbreviation().equals(language))
+                .collect(Collectors.toList())
+                .get(0)
+                .getCategoryName());
+        return categoryDto;
     }
 }

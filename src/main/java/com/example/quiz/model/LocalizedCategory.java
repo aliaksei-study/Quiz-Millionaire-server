@@ -7,24 +7,24 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "localized_answer")
+@Table(name = "localized_category")
 @Getter
 @Setter
 @NoArgsConstructor
-public class LocalizedAnswer {
+public class LocalizedCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "answer_text")
-    private String answerText;
+    @Column(name = "category_name")
+    private String categoryName;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "language_id")
     private Language language;
 
-    public LocalizedAnswer(String answerText, Language language) {
-        this.answerText = answerText;
+    public LocalizedCategory(String categoryName, Language language) {
+        this.categoryName = categoryName;
         this.language = language;
     }
 
@@ -36,13 +36,13 @@ public class LocalizedAnswer {
         if (null == obj || this.getClass() != obj.getClass()) {
             return false;
         }
-        LocalizedAnswer localizedAnswer = (LocalizedAnswer) obj;
-        return this.getId().equals(localizedAnswer.getId());
+        LocalizedCategory localizedCategory = (LocalizedCategory) obj;
+        return this.getId().equals(localizedCategory.getId());
     }
 
     @Override
     public int hashCode() {
-        return (31 * ((null == answerText) ? 0 : answerText.hashCode()) +
+        return (31 * ((null == categoryName) ? 0 : categoryName.hashCode()) +
                 31 * ((null == language) ? 0 : language.hashCode()));
     }
 }

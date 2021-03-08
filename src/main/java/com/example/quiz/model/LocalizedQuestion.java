@@ -20,7 +20,7 @@ public class LocalizedQuestion {
     private String questionText;
 
     @OneToOne
-    @JoinColumn(name = "lanuage_id")
+    @JoinColumn(name = "language_id")
     private Language language;
 
     public LocalizedQuestion(String questionText, Language language) {

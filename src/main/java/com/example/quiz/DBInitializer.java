@@ -46,7 +46,8 @@ public class DBInitializer implements CommandLineRunner {
         Language englishLanguage = new Language("English", "en-US");
         languageRepository.save(englishLanguage);
 
-        Category category = new Category("History");
+        Category category = new Category(List.of(new LocalizedCategory("History", englishLanguage),
+                new LocalizedCategory("История", russianLanguage)));
         categoryRepository.save(category);
         List<Answer> answerList = new ArrayList<>();
         saveQuestion(new Answer(List.of(new LocalizedAnswer("1941", russianLanguage), new LocalizedAnswer("1941", englishLanguage)), false),
@@ -70,7 +71,8 @@ public class DBInitializer implements CommandLineRunner {
                 answerList, "В каком году закончилась Первая мировая война?", "In what year did the First World War end?",
                 russianLanguage, englishLanguage, null, false, Difficulty.EASY, category);
 
-        Category literatureCategory = new Category("Literature");
+        Category literatureCategory = new Category(List.of(new LocalizedCategory("Literature", englishLanguage),
+                new LocalizedCategory("Литература", russianLanguage)));
         categoryRepository.save(literatureCategory);
         saveQuestion(new Answer(List.of(new LocalizedAnswer("Александр Пушкин", russianLanguage), new LocalizedAnswer("Alexander Pushkin", englishLanguage)), false),
                 new Answer(List.of(new LocalizedAnswer("Николай Гоголь", russianLanguage), new LocalizedAnswer("Nicolai Gogol", englishLanguage)), false),
@@ -100,7 +102,7 @@ public class DBInitializer implements CommandLineRunner {
                 answerList, "В каком городе родился Уильям Шекспир?", "In which city was William Shakespeare born?",
                 russianLanguage, englishLanguage, null, false, Difficulty.HARD, literatureCategory);
 
-        Category moneyCategory = new Category("Money");
+        Category moneyCategory = new Category(List.of(new LocalizedCategory("Money", englishLanguage), new LocalizedCategory("Деньги", russianLanguage)));
         categoryRepository.save(moneyCategory);
         saveQuestion(new Answer(List.of(new LocalizedAnswer("Доллар", russianLanguage), new LocalizedAnswer("Dollar", englishLanguage)), false),
                 new Answer(List.of(new LocalizedAnswer("Евро", russianLanguage), new LocalizedAnswer("Euro", englishLanguage)), false),
@@ -116,7 +118,7 @@ public class DBInitializer implements CommandLineRunner {
                 answerList, "Валюта Швейцарии?", "Sweden currency?",
                 russianLanguage, englishLanguage, null, false, Difficulty.MEDIUM, moneyCategory);
 
-        Category secondCategory = new Category("Geography");
+        Category secondCategory = new Category(List.of(new LocalizedCategory("Geography", englishLanguage), new LocalizedCategory("География", russianLanguage)));
         categoryRepository.save(secondCategory);
         saveQuestion(new Answer(List.of(new LocalizedAnswer("Кирибати", russianLanguage), new LocalizedAnswer("Kiribati", englishLanguage)), false),
                 new Answer(List.of(new LocalizedAnswer("Палау", russianLanguage), new LocalizedAnswer("Palau", englishLanguage)), false),

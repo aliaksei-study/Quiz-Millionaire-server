@@ -1,14 +1,12 @@
 package com.example.quiz.service;
 
-import com.example.quiz.dto.QuestionDto;
-import com.example.quiz.dto.SatisfiedQuestionStatisticsDto;
+import com.example.quiz.controller.v1.response.TranslatedQuestionResponse;
+import com.example.quiz.dto.*;
+import com.example.quiz.exception.CategoryNotFoundException;
 import com.example.quiz.exception.LanguageNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
-import com.example.quiz.model.Category;
-import com.example.quiz.model.Language;
-import com.example.quiz.model.Player;
-import com.example.quiz.model.Question;
+import com.example.quiz.model.*;
 import com.example.quiz.model.enumeration.Difficulty;
 import com.example.quiz.repository.AnswerStatisticsRepository;
 import com.example.quiz.repository.PlayerRepository;
@@ -34,15 +32,19 @@ public class QuestionServiceImpl implements IQuestionService {
     private final PlayerRepository playerRepository;
 
     private final ILanguageService languageService;
+    private final ICategoryService categoryService;
 
     @Autowired
     public QuestionServiceImpl(QuestionRepository questionRepository,
-                               AnswerStatisticsRepository answerStatisticsRepository, PlayerRepository playerRepository,
-                               ILanguageService languageService) {
+                               AnswerStatisticsRepository answerStatisticsRepository,
+                               PlayerRepository playerRepository,
+                               ILanguageService languageService,
+                               ICategoryService categoryService) {
         this.questionRepository = questionRepository;
         this.answerStatisticsRepository = answerStatisticsRepository;
         this.playerRepository = playerRepository;
         this.languageService = languageService;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -93,20 +95,27 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public List<QuestionDto> getQuestions(String language) {
-        return Mapper.mapAllLocalizedQuestionsToQuestionDto(questionRepository.findAll(), language);
+    public List<TranslatedQuestionResponse> getQuestions() {
+        return Mapper.mapAll(questionRepository.findAll(), TranslatedQuestionResponse.class);
     }
 
     @Override
-    public QuestionDto saveQuestion(QuestionDto questionDto, String language) throws LanguageNotFoundException {
-        Language languageFromDb = languageService.findLanguageByAbbreviation(language);
-        Question question = Mapper.mapQuestionDtoToLocalizedQuestion(questionDto, languageFromDb);
+    public TranslatedQuestionResponse saveQuestion(TranslatedQuestionDto questionDto) throws CategoryNotFoundException {
+        Category category = categoryService.getCategoryById(questionDto.getCategory());
+
+        questionDto.getQuestionTextTranslates().forEach(this::setPersistedLanguageIfNotExist);
+
+        questionDto.getAnswers()
+                .forEach((answer) -> answer.getLocalizedAnswers().forEach(this::setPersistedLanguageIfNotExist));
+
+        Question question = Mapper.map(questionDto, Question.class);
+        question.setCategory(category);
         if (question.getDifficulty() == null || question.getCategory() == null) {
             question.setDifficulty(Difficulty.MEDIUM);
             question.setIsTemporal(true);
         }
         question = questionRepository.save(question);
-        return Mapper.mapLocalizedQuestionToQuestionDto(question, language);
+        return Mapper.map(question, TranslatedQuestionResponse.class);
     }
 
     @Override
@@ -161,6 +170,13 @@ public class QuestionServiceImpl implements IQuestionService {
                     }
                 }
             });
+        }
+    }
+
+    public void setPersistedLanguageIfNotExist(TranslatedTextDto translate) {
+        if(translate.getLanguage().getId() == null) {
+            LanguageDto persistedLanguage = languageService.saveLanguage(translate.getLanguage());
+            translate.setLanguage(persistedLanguage);
         }
     }
 }

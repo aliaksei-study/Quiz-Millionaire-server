@@ -59,4 +59,10 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiException apiException = new ApiException(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
         return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
     }
+
+    @ExceptionHandler({CategoryNotFoundException.class})
+    public ResponseEntity<ApiException> handleCategoryNotFound(CategoryNotFoundException ex) {
+        ApiException apiException = new ApiException(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
+        return new ResponseEntity<>(apiException, new HttpHeaders(), apiException.getStatus());
+    }
 }
