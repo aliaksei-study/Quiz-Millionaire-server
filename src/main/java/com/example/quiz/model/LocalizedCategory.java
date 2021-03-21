@@ -19,7 +19,7 @@ public class LocalizedCategory {
     @Column(name = "category_name")
     private String categoryName;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne
     @JoinColumn(name = "language_id")
     private Language language;
 

@@ -1,6 +1,7 @@
 package com.example.quiz.service;
 
 import com.example.quiz.dto.LanguageDto;
+import com.example.quiz.dto.TranslatedTextDto;
 import com.example.quiz.exception.LanguageNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.Language;
@@ -38,5 +39,18 @@ public class LanguageServiceImpl implements ILanguageService {
         Language language = Mapper.map(languageDto, Language.class);
         language = languageRepository.save(language);
         return Mapper.map(language, LanguageDto.class);
+    }
+
+    @Override
+    public void setPersistedLanguageIfNotExist(TranslatedTextDto translate) {
+        if (translate.getLanguage().getId() == null) {
+            Optional<Language> textLanguageFromDb = findLanguageByAbbreviation(translate.getLanguage().getAbbreviation());
+            if (textLanguageFromDb.isPresent()) {
+                translate.setLanguage(Mapper.map(textLanguageFromDb.get(), LanguageDto.class));
+            } else {
+                LanguageDto persistedLanguage = saveLanguage(translate.getLanguage());
+                translate.setLanguage(persistedLanguage);
+            }
+        }
     }
 }

@@ -1,8 +1,6 @@
 package com.example.quiz.controller.v1.api;
 
-import com.example.quiz.controller.v1.request.NewCategoryCreationRequest;
-import com.example.quiz.dto.CategoryDto;
-import com.example.quiz.mapper.Mapper;
+import com.example.quiz.dto.TranslatedCategoryDto;
 import com.example.quiz.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,16 +23,16 @@ public class CategoryController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CategoryDto>> getAllCategories() {
-        List<CategoryDto> categories = categoryService.getCategories();
+    public ResponseEntity<List<TranslatedCategoryDto>> getAllCategories() {
+        List<TranslatedCategoryDto> categories = categoryService.getCategories();
         return ResponseEntity.ok(categories);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoryDto> saveCategory(@RequestBody @Valid NewCategoryCreationRequest request)
+    public ResponseEntity<TranslatedCategoryDto> saveCategory(@RequestBody @Valid TranslatedCategoryDto categoryDto)
             throws URISyntaxException {
-        CategoryDto categoryDto = categoryService.saveCategory(Mapper.map(request, CategoryDto.class));
-        return ResponseEntity.created(new URI("/api/v1/categories/" + categoryDto.getId()))
-                .body(categoryDto);
+        TranslatedCategoryDto persistedCategory = categoryService.saveCategory(categoryDto);
+        return ResponseEntity.created(new URI("/api/v1/categories/" + persistedCategory.getId()))
+                .body(persistedCategory);
     }
 }

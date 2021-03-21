@@ -18,9 +18,12 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "translated_category_id")
     List<LocalizedCategory> categoryNameTranslates;
+
+    @Column(name = "category_tag")
+    private String categoryTag;
 
     public Category(List<LocalizedCategory> categoryNameTranslates) {
         this.categoryNameTranslates = categoryNameTranslates;
@@ -28,14 +31,14 @@ public class Category implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(null == obj || this.getClass() != obj.getClass()) {
+        if (null == obj || this.getClass() != obj.getClass()) {
             return false;
         }
         Category category = (Category) obj;
-        if(null != this.categoryNameTranslates) {
+        if (null != this.categoryNameTranslates) {
             return this.id.equals(category.getId());
         }
         return false;
@@ -43,6 +46,6 @@ public class Category implements Serializable {
 
     @Override
     public int hashCode() {
-        return  31 * ((null == this.categoryNameTranslates) ? 0 : this.categoryNameTranslates.hashCode());
+        return 31 * ((null == this.categoryNameTranslates) ? 0 : this.categoryNameTranslates.hashCode());
     }
 }

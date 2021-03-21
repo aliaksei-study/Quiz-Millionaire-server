@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TranslatedTextDto {
+    private Long id;
     private String translatedText;
     private LanguageDto language;
 }

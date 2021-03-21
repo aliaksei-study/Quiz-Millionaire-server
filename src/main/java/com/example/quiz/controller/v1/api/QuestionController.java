@@ -1,14 +1,10 @@
 package com.example.quiz.controller.v1.api;
 
 import com.example.quiz.controller.v1.response.PlayerQuestionResponse;
-import com.example.quiz.controller.v1.request.AddingQuestionRequest;
-import com.example.quiz.controller.v1.request.EditQuestionRequest;
 import com.example.quiz.controller.v1.response.TranslatedQuestionResponse;
-import com.example.quiz.dto.QuestionDto;
 import com.example.quiz.dto.SatisfiedQuestionStatisticsDto;
 import com.example.quiz.dto.TranslatedQuestionDto;
 import com.example.quiz.exception.CategoryNotFoundException;
-import com.example.quiz.exception.LanguageNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.service.IQuestionService;
@@ -58,10 +54,10 @@ public class QuestionController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<QuestionDto> updateQuestion(@PathVariable("id") Long id,
-                                                      @RequestBody @Valid EditQuestionRequest editQuestionRequest)
-            throws QuestionNotFoundException {
-        QuestionDto questionDto = questionService.updateQuestion(Mapper.map(editQuestionRequest, QuestionDto.class), id);
+    public ResponseEntity<TranslatedQuestionResponse> updateQuestion(@PathVariable("id") Long id,
+                                                      @RequestBody @Valid TranslatedQuestionDto translatedQuestionDto)
+            throws QuestionNotFoundException, CategoryNotFoundException {
+        TranslatedQuestionResponse questionDto = questionService.updateQuestion(translatedQuestionDto, id);
         return ResponseEntity.accepted().body(questionDto);
     }
 

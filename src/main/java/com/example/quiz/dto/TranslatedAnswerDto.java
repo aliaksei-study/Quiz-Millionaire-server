@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class TranslatedAnswerDto {
+    private Long id;
     private Boolean isCorrect;
     private List<TranslatedTextDto> localizedAnswers;
-
 }

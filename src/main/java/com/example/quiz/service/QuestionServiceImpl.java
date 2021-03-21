@@ -3,14 +3,11 @@ package com.example.quiz.service;
 import com.example.quiz.controller.v1.response.TranslatedQuestionResponse;
 import com.example.quiz.dto.*;
 import com.example.quiz.exception.CategoryNotFoundException;
-import com.example.quiz.exception.LanguageNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
 import com.example.quiz.model.*;
 import com.example.quiz.model.enumeration.Difficulty;
-import com.example.quiz.repository.AnswerStatisticsRepository;
-import com.example.quiz.repository.PlayerRepository;
-import com.example.quiz.repository.QuestionRepository;
+import com.example.quiz.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,6 +28,8 @@ public class QuestionServiceImpl implements IQuestionService {
     private final QuestionRepository questionRepository;
     private final AnswerStatisticsRepository answerStatisticsRepository;
     private final PlayerRepository playerRepository;
+    private final LocalizedAnswerRepository localizedAnswerRepository;
+    private final LocalizedQuestionRepository localizedQuestionRepository;
 
     private final ILanguageService languageService;
     private final ICategoryService categoryService;
@@ -39,21 +39,44 @@ public class QuestionServiceImpl implements IQuestionService {
                                AnswerStatisticsRepository answerStatisticsRepository,
                                PlayerRepository playerRepository,
                                ILanguageService languageService,
-                               ICategoryService categoryService) {
+                               ICategoryService categoryService,
+                               LocalizedQuestionRepository localizedQuestionRepository,
+                               LocalizedAnswerRepository localizedAnswerRepository) {
         this.questionRepository = questionRepository;
         this.answerStatisticsRepository = answerStatisticsRepository;
         this.playerRepository = playerRepository;
         this.languageService = languageService;
         this.categoryService = categoryService;
+        this.localizedQuestionRepository = localizedQuestionRepository;
+        this.localizedAnswerRepository = localizedAnswerRepository;
     }
 
     @Override
-    public QuestionDto updateQuestion(QuestionDto questionDto, Long id) throws QuestionNotFoundException {
+    public TranslatedQuestionResponse updateQuestion(TranslatedQuestionDto questionDto, Long id)
+            throws QuestionNotFoundException, CategoryNotFoundException {
         Question question = getQuestionById(id);
+
+        if (!question.getCategory().getId().equals(questionDto.getCategory())) {
+            Category category = categoryService.getCategoryById(questionDto.getCategory());
+            question.setCategory(category);
+        }
+
+        questionDto.getQuestionTextTranslates().forEach(languageService::setPersistedLanguageIfNotExist);
+        question.setQuestionTextTranslates(Mapper.mapAll(questionDto.getQuestionTextTranslates(), LocalizedQuestion.class));
+
+        questionDto.getAnswers()
+                .forEach((answer) -> answer.getLocalizedAnswers().forEach(languageService::setPersistedLanguageIfNotExist));
+        question.setAnswers(Mapper.mapAll(questionDto.getAnswers(), Answer.class));
+
         question.setIsTemporal(questionDto.getIsTemporal());
         question.setDifficulty(questionDto.getDifficulty());
-        question.setCategory(Mapper.map(questionDto.getCategory(), Category.class));
-        return Mapper.map(questionRepository.save(question), QuestionDto.class);
+        question.setImagePath(questionDto.getImagePath());
+
+        updatePersistedQuestion(question);
+
+        question = questionRepository.save(question);
+
+        return Mapper.map(question, TranslatedQuestionResponse.class);
     }
 
     @Override
@@ -103,10 +126,10 @@ public class QuestionServiceImpl implements IQuestionService {
     public TranslatedQuestionResponse saveQuestion(TranslatedQuestionDto questionDto) throws CategoryNotFoundException {
         Category category = categoryService.getCategoryById(questionDto.getCategory());
 
-        questionDto.getQuestionTextTranslates().forEach(this::setPersistedLanguageIfNotExist);
+        questionDto.getQuestionTextTranslates().forEach(languageService::setPersistedLanguageIfNotExist);
 
         questionDto.getAnswers()
-                .forEach((answer) -> answer.getLocalizedAnswers().forEach(this::setPersistedLanguageIfNotExist));
+                .forEach((answer) -> answer.getLocalizedAnswers().forEach(languageService::setPersistedLanguageIfNotExist));
 
         Question question = Mapper.map(questionDto, Question.class);
         question.setCategory(category);
@@ -114,6 +137,9 @@ public class QuestionServiceImpl implements IQuestionService {
             question.setDifficulty(Difficulty.MEDIUM);
             question.setIsTemporal(true);
         }
+
+        updatePersistedQuestion(question);
+
         question = questionRepository.save(question);
         return Mapper.map(question, TranslatedQuestionResponse.class);
     }
@@ -173,10 +199,29 @@ public class QuestionServiceImpl implements IQuestionService {
         }
     }
 
-    public void setPersistedLanguageIfNotExist(TranslatedTextDto translate) {
-        if(translate.getLanguage().getId() == null) {
-            LanguageDto persistedLanguage = languageService.saveLanguage(translate.getLanguage());
-            translate.setLanguage(persistedLanguage);
+    public void updatePersistedQuestion(Question question) {
+        question.setQuestionTextTranslates(question.getQuestionTextTranslates()
+                .stream()
+                .map(this::persistQuestionTranslateIfNotExist)
+                .collect(Collectors.toList()));
+
+        question.getAnswers().forEach((answer) -> answer.setLocalizedAnswers(answer.getLocalizedAnswers()
+                .stream()
+                .map(this::persistAnswerTranslateIfNotExist)
+                .collect(Collectors.toList())));
+    }
+
+    public LocalizedQuestion persistQuestionTranslateIfNotExist(LocalizedQuestion localizedQuestion) {
+        if (localizedQuestion.getId() == null) {
+            return localizedQuestionRepository.save(localizedQuestion);
         }
+        return localizedQuestion;
+    }
+
+    public LocalizedAnswer persistAnswerTranslateIfNotExist(LocalizedAnswer localizedAnswer) {
+        if(localizedAnswer.getId() == null) {
+            return localizedAnswerRepository.save(localizedAnswer);
+        }
+        return localizedAnswer;
     }
 }

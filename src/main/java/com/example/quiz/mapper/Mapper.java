@@ -29,11 +29,17 @@ public class Mapper {
         modelMapper.typeMap(LocalizedAnswer.class, TranslatedTextDto.class).addMappings((mapper) ->
                 mapper.map(LocalizedAnswer::getAnswerText, TranslatedTextDto::setTranslatedText));
 
+        modelMapper.typeMap(LocalizedCategory.class, TranslatedTextDto.class).addMappings((mapper) ->
+                mapper.map(LocalizedCategory::getCategoryName, TranslatedTextDto::setTranslatedText));
+
         modelMapper.typeMap(TranslatedTextDto.class, LocalizedQuestion.class).addMappings((mapper) ->
                 mapper.map(TranslatedTextDto::getTranslatedText, LocalizedQuestion::setQuestionText));
 
         modelMapper.typeMap(TranslatedTextDto.class, LocalizedAnswer.class).addMappings((mapper) ->
                 mapper.map(TranslatedTextDto::getTranslatedText, LocalizedAnswer::setAnswerText));
+
+        modelMapper.typeMap(TranslatedTextDto.class, LocalizedCategory.class).addMappings((mapper) ->
+                mapper.map(TranslatedTextDto::getTranslatedText, LocalizedCategory::setCategoryName));
 
         modelMapper.typeMap(TranslatedTextDto.class, LocalizedCategory.class).addMappings((mapper) ->
                 mapper.map(TranslatedTextDto::getTranslatedText, LocalizedCategory::setCategoryName));

@@ -18,7 +18,7 @@ public class Question extends AbstractAuditingEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "question_translation_id")
     List<LocalizedQuestion> questionTextTranslates;
 

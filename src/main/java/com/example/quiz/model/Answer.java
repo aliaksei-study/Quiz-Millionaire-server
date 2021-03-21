@@ -17,14 +17,15 @@ public class Answer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "answer_id")
     List<LocalizedAnswer> localizedAnswers;
 
     @Column(name = "isCorrect")
     private Boolean isCorrect;
 
-    public Answer() {}
+    public Answer() {
+    }
 
     public Answer(List<LocalizedAnswer> localizedAnswers, Boolean isCorrect) {
         this.localizedAnswers = localizedAnswers;
