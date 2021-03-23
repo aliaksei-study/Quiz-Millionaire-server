@@ -1,6 +1,8 @@
 package com.example.quiz.controller.v1.api;
 
 import com.example.quiz.dto.TranslatedCategoryDto;
+import com.example.quiz.exception.CategoryNotFoundException;
+import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,5 +36,18 @@ public class CategoryController {
         TranslatedCategoryDto persistedCategory = categoryService.saveCategory(categoryDto);
         return ResponseEntity.created(new URI("/api/v1/categories/" + persistedCategory.getId()))
                 .body(persistedCategory);
+    }
+
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TranslatedCategoryDto> updateCategory(@PathVariable("id") Long id,
+                                                                @RequestBody @Valid TranslatedCategoryDto updatedCategoryDto)
+            throws CategoryNotFoundException {
+        TranslatedCategoryDto updatedCategory = categoryService.updateCategory(updatedCategoryDto, id);
+        return ResponseEntity.accepted().body(updatedCategory);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public void deleteCategory(@PathVariable("id") Long id) throws CategoryNotFoundException {
+        categoryService.deleteCategory(id);
     }
 }

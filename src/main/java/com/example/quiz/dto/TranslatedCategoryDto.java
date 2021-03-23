@@ -14,4 +14,5 @@ import java.util.List;
 public class TranslatedCategoryDto {
     private Long id;
     private List<TranslatedTextDto> categoryNameTranslates;
+    private String categoryTag;
 }

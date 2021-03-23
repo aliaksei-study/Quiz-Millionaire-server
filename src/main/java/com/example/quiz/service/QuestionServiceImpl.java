@@ -56,7 +56,7 @@ public class QuestionServiceImpl implements IQuestionService {
             throws QuestionNotFoundException, CategoryNotFoundException {
         Question question = getQuestionById(id);
 
-        if (!question.getCategory().getId().equals(questionDto.getCategory())) {
+        if (question.getCategory() == null || !question.getCategory().getId().equals(questionDto.getCategory())) {
             Category category = categoryService.getCategoryById(questionDto.getCategory());
             question.setCategory(category);
         }

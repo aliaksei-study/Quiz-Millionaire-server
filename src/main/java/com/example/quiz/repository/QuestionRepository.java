@@ -1,5 +1,6 @@
 package com.example.quiz.repository;
 
+import com.example.quiz.model.Category;
 import com.example.quiz.model.Question;
 import com.example.quiz.model.enumeration.Difficulty;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,8 @@ public interface QuestionRepository extends PagingAndSortingRepository<Question,
                                                                  Pageable pageable);
 
     List<Question> findAllByIsTemporal(Boolean isTemporal);
+
+    List<Question> findAllByCategory(Category category);
 
     List<Question> findAllByDislikedQuestionPlayersIsNotNullAndId(Long id);
 
