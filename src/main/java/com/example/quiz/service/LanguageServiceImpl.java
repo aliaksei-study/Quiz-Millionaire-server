@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class LanguageServiceImpl implements ILanguageService {
-    private final String DEFAULT_LANGUAGE_ABBREVIATION = "en-US";
+    private final String DEFAULT_LANGUAGE_ABBREVIATION = "en";
 
     private final LanguageRepository languageRepository;
 

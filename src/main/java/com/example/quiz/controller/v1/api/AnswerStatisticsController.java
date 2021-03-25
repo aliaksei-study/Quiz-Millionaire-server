@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/answer-statistics")
 public class AnswerStatisticsController {
 
-    private IAnswerStatistics answerStatistics;
+    private final IAnswerStatistics answerStatistics;
 
     @Autowired
     public AnswerStatisticsController(IAnswerStatistics answerStatistics) {
@@ -35,8 +35,11 @@ public class AnswerStatisticsController {
             @RequestBody @Valid PlayerAnswerRequest playerAnswerRequest, @AuthenticationPrincipal Player player)
             throws AnswerNotFoundException, QuestionNotFoundException, URISyntaxException {
         AnswerStatisticsDto answerStatisticsDto;
+
         answerStatisticsDto = answerStatistics.savePlayerQuestionAnswer(player, playerAnswerRequest.getQuestionId(),
-                playerAnswerRequest.getAnswerId());
+                playerAnswerRequest.getAnswerId(), playerAnswerRequest.getLanguageAbbrev(),
+                playerAnswerRequest.getLanguage());
+
         return ResponseEntity.created(new URI("/api/v1/answer-statistics/" + answerStatisticsDto.getId()))
                 .body(answerStatisticsDto);
     }

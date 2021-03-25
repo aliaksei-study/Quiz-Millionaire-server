@@ -49,10 +49,10 @@ public class DBInitializer implements CommandLineRunner {
         Player player = new Player("alexbeljak99@gmail.com", passwordEncoder.encode("123456"), Role.ADMIN);
         playerRepository.save(player);
 
-        Language russianLanguage = new Language("Russian", "ru");
+        Language russianLanguage = new Language("Русский", "ru");
         languageRepository.save(russianLanguage);
 
-        Language englishLanguage = new Language("English", "en-US");
+        Language englishLanguage = new Language("English", "en");
         languageRepository.save(englishLanguage);
 
         Category category = new Category(List.of(new LocalizedCategory("History", englishLanguage),

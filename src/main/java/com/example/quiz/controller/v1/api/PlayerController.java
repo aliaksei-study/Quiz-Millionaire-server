@@ -23,12 +23,13 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1")
 public class PlayerController {
-    private IPlayerService playerService;
-    private JwtProvider jwtProvider;
-    private PasswordEncoder passwordEncoder;
-    private CookieUtil cookieUtil;
+    private final IPlayerService playerService;
+    private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final CookieUtil cookieUtil;
 
-    public PlayerController(IPlayerService playerService, JwtProvider jwtProvider, PasswordEncoder passwordEncoder, CookieUtil cookieUtil) {
+    public PlayerController(IPlayerService playerService, JwtProvider jwtProvider, PasswordEncoder passwordEncoder,
+                            CookieUtil cookieUtil) {
         this.playerService = playerService;
         this.jwtProvider = jwtProvider;
         this.passwordEncoder = passwordEncoder;
