@@ -105,14 +105,14 @@ public class AnswerStatisticsImpl implements IAnswerStatistics {
 
     public QuestionAnswersStatisticsDto createInitialQuestionAnswerStatisticsInstance(
             AnswerStatistics answerStatistics) {
-//        return new QuestionAnswersStatisticsDto(answerStatistics.getQuestion().getQuestionText(),
-//                answerStatistics.getQuestion().getDifficulty(), Mapper.map(answerStatistics.getQuestion()
-//                        .getCategory() == null ? new Category() : answerStatistics.getQuestion().getCategory(),
-//                CategoryDto.class), answerStatistics.getQuestion().getAnswers()
-//                .stream()
-//                .map((answer) -> new AnswerHistogramDto(answer,
-//                        answerStatistics.getAnswer().getId().equals(answer.getId()) ? 1 : 0))
-//                .collect(Collectors.toList()));
-        return new QuestionAnswersStatisticsDto();
+        return new QuestionAnswersStatisticsDto(
+                Mapper.mapAll(answerStatistics.getQuestion().getQuestionTextTranslates(), TranslatedTextDto.class),
+                answerStatistics.getQuestion().getDifficulty(), answerStatistics.getQuestion().getCategory() != null ?
+                answerStatistics.getQuestion().getCategory().getId() : null,
+                answerStatistics.getQuestion().getAnswers()
+                        .stream()
+                        .map((answer) -> new AnswerHistogramDto(Mapper.map(answer, TranslatedAnswerDto.class),
+                                answerStatistics.getAnswer().getId().equals(answer.getId()) ? 1 : 0))
+                        .collect(Collectors.toList()));
     }
 }

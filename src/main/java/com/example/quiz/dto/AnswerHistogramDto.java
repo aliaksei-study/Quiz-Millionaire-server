@@ -1,6 +1,5 @@
 package com.example.quiz.dto;
 
-import com.example.quiz.model.Answer;
 import lombok.*;
 
 @Getter
@@ -9,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class AnswerHistogramDto {
-    private Answer answer;
+    private TranslatedAnswerDto answer;
     private int numberOfAnswers;
 }

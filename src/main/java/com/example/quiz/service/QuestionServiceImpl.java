@@ -106,15 +106,13 @@ public class QuestionServiceImpl implements IQuestionService {
 
     @Override
     public List<SatisfiedQuestionStatisticsDto> getSatisfiedQuestionStatistics() {
-//        return questionRepository.findAll()
-//                .stream()
-//                .map((question) -> new SatisfiedQuestionStatisticsDto(question.getQuestionText(),
-//                        question.getDifficulty(), Mapper.map(question.getCategory() == null ? new Category() :
-//                        question.getCategory(), CategoryDto.class),
-//                        question.getLikedQuestionPlayers().size(), question.getDislikedQuestionPlayers().size()))
-//                .filter((statistic) -> statistic.getNumberOfDislikes() > 0 || statistic.getNumberOfLikes() > 0)
-//                .collect(Collectors.toList());
-        return List.of();
+        return questionRepository.findAll()
+                .stream()
+                .map((question) -> new SatisfiedQuestionStatisticsDto(Mapper.mapAll(question.getQuestionTextTranslates(), TranslatedTextDto.class),
+                        question.getDifficulty(), question.getCategory() != null ? question.getCategory().getId() : null,
+                        question.getLikedQuestionPlayers().size(), question.getDislikedQuestionPlayers().size()))
+                .filter((statistic) -> statistic.getNumberOfDislikes() > 0 || statistic.getNumberOfLikes() > 0)
+                .collect(Collectors.toList());
     }
 
     @Override

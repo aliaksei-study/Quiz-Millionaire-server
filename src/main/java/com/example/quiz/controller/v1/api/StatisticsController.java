@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/statistics")
 public class StatisticsController {
-    private IStatisticsService statisticsService;
+    private final IStatisticsService statisticsService;
 
     @Autowired
     public StatisticsController(IStatisticsService statisticsService) {
