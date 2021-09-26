@@ -14,4 +14,8 @@ public class PlayerAnswerRequest {
     private Long answerId;
     @NotNull
     private Long questionId;
+    @NotNull
+    private String languageAbbrev;
+    @NotNull
+    private String language;
 }

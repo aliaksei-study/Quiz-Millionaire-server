@@ -1,9 +1,6 @@
 package com.example.quiz.service;
 
-import com.example.quiz.dto.AnswerHistogramDto;
-import com.example.quiz.dto.AnswerStatisticsDto;
-import com.example.quiz.dto.CategoryDto;
-import com.example.quiz.dto.QuestionAnswersStatisticsDto;
+import com.example.quiz.dto.*;
 import com.example.quiz.exception.AnswerNotFoundException;
 import com.example.quiz.exception.QuestionNotFoundException;
 import com.example.quiz.mapper.Mapper;
@@ -19,32 +16,46 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class AnswerStatisticsImpl implements IAnswerStatistics {
-    private AnswerStatisticsRepository answerStatisticsRepository;
+    private final AnswerStatisticsRepository answerStatisticsRepository;
 
-    private IQuestionService questionService;
-    private IAnswerService answerService;
+    private final IQuestionService questionService;
+    private final IAnswerService answerService;
+    private final ILanguageService languageService;
 
     @Autowired
     public AnswerStatisticsImpl(AnswerStatisticsRepository answerStatisticsRepository, IQuestionService questionService,
-                                IAnswerService answerService) {
+                                IAnswerService answerService, ILanguageService languageService) {
         this.answerStatisticsRepository = answerStatisticsRepository;
         this.questionService = questionService;
         this.answerService = answerService;
+        this.languageService = languageService;
     }
 
     @Override
-    public AnswerStatisticsDto savePlayerQuestionAnswer(Player player, Long questionId, Long answerId)
+    public AnswerStatisticsDto savePlayerQuestionAnswer(Player player,
+                                                        Long questionId,
+                                                        Long answerId,
+                                                        String languageAbbrev,
+                                                        String language)
             throws AnswerNotFoundException, QuestionNotFoundException {
+        Optional<Language> languageFromDb = languageService.findLanguageByAbbreviation(languageAbbrev);
+        Language persistedLanguage = languageFromDb
+                .orElseGet(() -> Mapper.map(languageService.saveLanguage(new LanguageDto(null, language, languageAbbrev)),
+                        Language.class));
+
         Optional<AnswerStatistics> answerStatisticsOptional;
         Question question = questionService.getQuestionById(questionId);
         Answer answer = answerService.getAnswerById(answerId);
+
         answerStatisticsOptional = answerStatisticsRepository.findAnswerStatisticsByAnswerAndQuestionAndPlayer(answer,
                 question, player);
         if (answerStatisticsOptional.isEmpty()) {
             return Mapper.map(answerStatisticsRepository.save
-                    (new AnswerStatistics(question, answer, player)), AnswerStatisticsDto.class);
+                    (new AnswerStatistics(question, answer, persistedLanguage, player)), AnswerStatisticsDto.class);
         } else {
-            return Mapper.map(answerStatisticsOptional.get(), AnswerStatisticsDto.class);
+            AnswerStatistics answerStatistics = answerStatisticsOptional.get();
+            answerStatistics.setLanguage(persistedLanguage);
+            return Mapper.map(answerStatistics, AnswerStatisticsDto.class);
         }
     }
 
@@ -94,13 +105,14 @@ public class AnswerStatisticsImpl implements IAnswerStatistics {
 
     public QuestionAnswersStatisticsDto createInitialQuestionAnswerStatisticsInstance(
             AnswerStatistics answerStatistics) {
-        return new QuestionAnswersStatisticsDto(answerStatistics.getQuestion().getQuestionText(),
-                answerStatistics.getQuestion().getDifficulty(), Mapper.map(answerStatistics.getQuestion()
-                        .getCategory() == null ? new Category() : answerStatistics.getQuestion().getCategory(),
-                CategoryDto.class), answerStatistics.getQuestion().getAnswers()
-                .stream()
-                .map((answer) -> new AnswerHistogramDto(answer,
-                        answerStatistics.getAnswer().getId().equals(answer.getId()) ? 1 : 0))
-                .collect(Collectors.toList()));
+        return new QuestionAnswersStatisticsDto(
+                Mapper.mapAll(answerStatistics.getQuestion().getQuestionTextTranslates(), TranslatedTextDto.class),
+                answerStatistics.getQuestion().getDifficulty(), answerStatistics.getQuestion().getCategory() != null ?
+                answerStatistics.getQuestion().getCategory().getId() : null,
+                answerStatistics.getQuestion().getAnswers()
+                        .stream()
+                        .map((answer) -> new AnswerHistogramDto(Mapper.map(answer, TranslatedAnswerDto.class),
+                                answerStatistics.getAnswer().getId().equals(answer.getId()) ? 1 : 0))
+                        .collect(Collectors.toList()));
     }
 }

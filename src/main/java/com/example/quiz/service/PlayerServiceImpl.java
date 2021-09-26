@@ -22,8 +22,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class PlayerServiceImpl implements IPlayerService {
-    private PlayerRepository playerRepository;
-    private IQuestionService questionService;
+    private final PlayerRepository playerRepository;
+    private final IQuestionService questionService;
 
     @Autowired
     public PlayerServiceImpl(PlayerRepository playerRepository, IQuestionService questionService) {
@@ -55,7 +55,8 @@ public class PlayerServiceImpl implements IPlayerService {
     }
 
     @Override
-    public PlayerDto likeQuestion(Long questionId, Player player) throws QuestionNotFoundException, QuestionAlreadyLikedException {
+    public PlayerDto likeQuestion(Long questionId, Player player) throws QuestionNotFoundException,
+            QuestionAlreadyLikedException {
         Question likedQuestion = questionService.getQuestionById(questionId);
         List<Question> playerLikedQuestions = player.getLikedQuestions();
         List<Question> playerDislikedQuestions = player.getDislikedQuestions();
@@ -70,7 +71,8 @@ public class PlayerServiceImpl implements IPlayerService {
     }
 
     @Override
-    public PlayerDto dislikeQuestion(Long questionId, Player player) throws QuestionNotFoundException, QuestionAlreadyDislikedException {
+    public PlayerDto dislikeQuestion(Long questionId, Player player) throws QuestionNotFoundException,
+            QuestionAlreadyDislikedException {
         Question dislikedQuestion = questionService.getQuestionById(questionId);
         List<Question> playerLikedQuestions = player.getLikedQuestions();
         List<Question> playerDislikedQuestions = player.getDislikedQuestions();

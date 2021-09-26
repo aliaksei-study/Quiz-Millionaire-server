@@ -11,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class QuestionAnswersStatisticsDto {
-    private String questionText;
+    private List<TranslatedTextDto> questionTextTranslates;
     private Difficulty difficulty;
-    private CategoryDto category;
+    private Long categoryId;
     private List<AnswerHistogramDto> answerHistograms;
 }

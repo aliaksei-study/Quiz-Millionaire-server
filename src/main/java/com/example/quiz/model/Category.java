@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "category")
@@ -17,30 +18,34 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "category_name")
-    private String categoryName;
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinColumn(name = "translated_category_id")
+    List<LocalizedCategory> categoryNameTranslates;
 
-    public Category(String categoryName) {
-        this.categoryName = categoryName;
+    @Column(name = "category_tag")
+    private String categoryTag;
+
+    public Category(List<LocalizedCategory> categoryNameTranslates) {
+        this.categoryNameTranslates = categoryNameTranslates;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(null == obj || this.getClass() != obj.getClass()) {
+        if (null == obj || this.getClass() != obj.getClass()) {
             return false;
         }
         Category category = (Category) obj;
-        if(null != this.categoryName) {
-            return this.categoryName.equals(category.categoryName);
+        if (null != this.categoryNameTranslates) {
+            return this.id.equals(category.getId());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return  31 * ((null == this.categoryName) ? 0 : this.categoryName.hashCode());
+        return 31 * ((null == this.categoryNameTranslates) ? 0 : this.categoryNameTranslates.hashCode());
     }
 }

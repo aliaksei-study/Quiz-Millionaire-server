@@ -10,9 +10,16 @@ import java.util.List;
 import java.util.Map;
 
 public interface IAnswerStatistics {
-    AnswerStatisticsDto savePlayerQuestionAnswer(Player player, Long questionId, Long answerId)
+    AnswerStatisticsDto savePlayerQuestionAnswer(Player player,
+                                                 Long questionId,
+                                                 Long answerId,
+                                                 String languageAbbrev,
+                                                 String language)
             throws QuestionNotFoundException, AnswerNotFoundException;
+
     Map<Long, Integer> getPlayerAnswersHistogram(Long questionId) throws QuestionNotFoundException;
+
     List<QuestionAnswersStatisticsDto> getQuestionAnswersHistograms();
+
     void deleteAnswerStatisticsByPlayer(Player player);
 }
